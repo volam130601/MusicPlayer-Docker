@@ -1,0 +1,34 @@
+version: '3.8'
+#containers => services
+services:
+  mysql-musicplayer5-container:
+    image: mysql:8.0.29
+    container_name: mysql-musicplayer5-container
+    ports:
+      - 3310:3306    
+    volumes:
+      - mysql-springboot-data:/var/lib/mysql
+      - mysql-springboot-config-deamond:/etc/mysql/conf.d
+    networks:
+      - backend
+    environment:
+      MYSQL_USER: lam
+      MYSQL_PASSWORD: 870124zxc
+      MYSQL_ROOT_PASSWORD: 870124zxc
+      MYSQL_DATABASE: dbmusic
+  musicplayer5-docker-container:
+    image: levidocker123/musicplayer5-docker:latest
+    container_name: musicplayer5-docker-container
+    ports:
+      - 8085:8081
+    volumes:
+      - ./:/app
+    networks:
+      - backend
+#create network     
+networks:
+  backend:
+    name: musicplayer-app-network
+volumes:
+  mysql-springboot-data:
+  mysql-springboot-config-deamond:
