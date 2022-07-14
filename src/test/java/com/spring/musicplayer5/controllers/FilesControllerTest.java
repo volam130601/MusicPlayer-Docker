@@ -35,12 +35,12 @@ class FilesControllerTest {
         }
     }
 
-    @Test
-    public void deleteAllFile() {
-        //Delete All User
-        Path root = Path.of("src/main/resources/images/user/luffy-gold.jpg");
-        filesStorageService.deleteAll(root);
-    }
+//    @Test
+//    public void deleteAllFile() {
+//        //Delete All User
+//        Path root = Path.of("src/main/resources/images/user/luffy-gold.jpg");
+//        filesStorageService.deleteAll(root);
+//    }
 
     @Test
     public void splitString() {
