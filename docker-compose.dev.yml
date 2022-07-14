@@ -20,7 +20,7 @@ services:
     image: levidocker123/musicplayer5-docker:latest
     container_name: musicplayer5-docker-container
     ports:
-      - 8085:8081
+      - 8085:8080
     volumes:
       - ./:/app
     networks:

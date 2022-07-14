@@ -7,14 +7,15 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor @NoArgsConstructor
-@Entity
+@Entity @Builder
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String detail;
+    private String content;
     private Date createAt;
-    private String createBy;
+    private int likes;
+    private int dislikes;
 
     @ManyToOne
     @JoinColumn(name = "track_id")
