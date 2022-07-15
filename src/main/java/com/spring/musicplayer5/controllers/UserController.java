@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.controllers;
 
+import com.spring.musicplayer5.controllers.impl.UserControllerImpl;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.dto.UserDto;
 import com.spring.musicplayer5.dto.files.FileInfo;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
-public class UserController extends FilesController{
+public class UserController extends FilesController implements UserControllerImpl {
 
     @Autowired
     private UserService userService;
@@ -70,7 +71,7 @@ public class UserController extends FilesController{
     }
 
     @PutMapping("/update_info")
-    public ResponseEntity<ResponseObject> updateInfoUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<ResponseObject> updateInfoUser(@RequestBody UserDto userDto) {
         User updateUser = userService.findByUsername(userDto.getUsername())
                 .map(user -> {
                     user.setFullName(userDto.getFullName());
@@ -84,13 +85,13 @@ public class UserController extends FilesController{
                     return userService.save(user);
                 });
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok" , "Update info user is Successfully!" , updateUser)
+                new ResponseObject("OK" , "Update info user is Successfully!" , updateUser)
         );
     }
 
     //Change follow Front End
     @PutMapping("/change_password")
-    public ResponseEntity<ResponseObject> change_password(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<ResponseObject> change_password(@RequestBody UserDto userDto) {
         Optional<User> exists = userService.findByUsernameAndPassword(userDto.getUsername() , userDto.getPassword());
         if(exists.isPresent()) {
             User user = new User();
@@ -98,11 +99,26 @@ public class UserController extends FilesController{
             user.setPassword(userDto.getNew_password());
             userService.save(user);
             return ResponseEntity.ok(
-                    new ResponseObject("ok" , "Change Password Successfully!" , user)
+                    new ResponseObject("OK" , "Change Password Successfully!" , user)
             );
         }
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("Failed" , "Change password is fail!" , "FAILED")
+                new ResponseObject("FAILED" , "Change password is fail!" , "FAILED")
+        );
+    }
+    @PutMapping("/locked_account")
+    public ResponseEntity<ResponseObject> locked_account(@RequestBody UserDto userDto) {
+        Optional<User> exists = userService.findByUsername(userDto.getUsername());
+        if(exists.isPresent()) {
+            User user = exists.get();
+            user.setLocked(true);
+            userService.save(user);
+            return ResponseEntity.ok(
+                    new ResponseObject("OK" , "Locked User is Successfully!" , user)
+            );
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("FAILED" , "Locked User is failed!" , "FAILED")
         );
     }
 
@@ -113,19 +129,20 @@ public class UserController extends FilesController{
         if(existsUser.isPresent()) {
             userService.deleteByUsername(loginRequestDto.getUsername());
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("ok" , "Delete User Successfully!" , "SUCCESS")
+                    new ResponseObject("OK" , "Delete User Successfully!" , "SUCCESS")
             );
         }
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("Failed" , "Delete User Failed!" , "FAILED")
+                new ResponseObject("FAILED" , "Delete User Failed!" , "FAILED")
         );
     }
 
     @GetMapping
     public ResponseEntity<ResponseObject> getAllUser() {
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("ok" , "Get All User!" , userService.findAll())
+                new ResponseObject("OK" , "Get All User!" , userService.findAll())
         );
     }
+
 
 }

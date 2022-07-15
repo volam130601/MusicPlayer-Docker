@@ -18,6 +18,7 @@ public class User {
     private String country;
     private Integer age;
     private String image;
+    private boolean isLocked = false;
 //    private String email;
 
     @ManyToOne

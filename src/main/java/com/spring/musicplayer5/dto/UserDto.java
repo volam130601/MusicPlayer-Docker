@@ -21,6 +21,6 @@ public class UserDto {
     private Integer age;
     private Object role;
     private String image;
-
+    private boolean isLocked;
     private String new_password;
 }
