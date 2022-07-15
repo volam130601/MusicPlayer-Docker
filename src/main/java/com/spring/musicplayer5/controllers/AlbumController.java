@@ -1,13 +1,12 @@
 package com.spring.musicplayer5.controllers;
 
+import com.spring.musicplayer5.controllers.impl.AlbumControllerImpl;
 import com.spring.musicplayer5.dto.AlbumOfTrackDto;
 import com.spring.musicplayer5.dto.ResponseObject;
-import com.spring.musicplayer5.dto.TrackDto;
 import com.spring.musicplayer5.entity.Album;
 import com.spring.musicplayer5.entity.Track;
 import com.spring.musicplayer5.services.AlbumService;
 import com.spring.musicplayer5.services.TrackService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +21,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/album")
-public class AlbumController {
+public class AlbumController implements AlbumControllerImpl {
     @Autowired
     private TrackService trackService;
     @Autowired
     private AlbumService albumService;
 
+    @Override
     @GetMapping("/get_track")
     public ResponseEntity<ResponseObject> getTracksBelongIdAlbum(@RequestParam long albumId) {
         List<Track> tracks= trackService.findByAlbum_Id(albumId);
@@ -46,6 +46,7 @@ public class AlbumController {
         );
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<ResponseObject> getAll() {
         List<Album> albums = albumService.getAll();

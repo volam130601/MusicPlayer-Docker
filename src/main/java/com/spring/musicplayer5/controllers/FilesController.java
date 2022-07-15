@@ -2,7 +2,9 @@ package com.spring.musicplayer5.controllers;
 
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.dto.files.FileInfo;
+import com.spring.musicplayer5.entity.User;
 import com.spring.musicplayer5.services.FilesStorageService;
+import com.spring.musicplayer5.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import javax.servlet.http.HttpServletRequest;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 //@RestController
 //@RequestMapping("/files")
@@ -23,6 +26,8 @@ import java.util.stream.Collectors;
 public class FilesController {
     @Autowired
     FilesStorageService storageService;
+    @Autowired
+    private UserService userService;
 
 //    private /*final*/ Path root/* = Path.of("src/main/resources/images/user")*/;
     private Path root;
@@ -32,13 +37,22 @@ public class FilesController {
     }
 
     @PostMapping("/files/upload")
-    public ResponseEntity<ResponseObject> uploadFile(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
+    public ResponseEntity<ResponseObject> uploadFile(@RequestParam("file") MultipartFile file,
+                                                     @RequestParam String username, HttpServletRequest request) {
         String message = "";
         try {
-            splitFileName(request);
-            storageService.save(root, file);
-            message = "Uploaded the file successfully: " + file.getOriginalFilename();
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK",message));
+            Optional<User> exsistUser = userService.findByUsername(username);
+            if(exsistUser.isPresent()) {
+                splitFileName(request);
+                storageService.save(root, file);
+                System.out.println("........."+file.toString());
+                User user = exsistUser.get();
+                user.setImage(file.getOriginalFilename());
+                message = "Uploaded the file successfully: " + file.getOriginalFilename();
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK",message,  userService.save(user)));
+            }
+            message = "Cannot found username!";
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ERROR",message));
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + "!";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseObject("ERROR",message));

@@ -15,4 +15,5 @@ public interface UserService {
     Optional<User> findByUsername(String username);
     void deleteByUsername(String username);
 
+    void deleteAll();
 }

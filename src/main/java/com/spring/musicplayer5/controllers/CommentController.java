@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.controllers;
 
+import com.spring.musicplayer5.controllers.impl.CommentControllerImpl;
 import com.spring.musicplayer5.dto.CommentDto;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.entity.Comment;
@@ -14,14 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/comment")
-public class CommentController {
+public class CommentController implements CommentControllerImpl {
     @Autowired
     private CommentService commentService;
     @Autowired
@@ -29,6 +28,7 @@ public class CommentController {
     @Autowired
     private TrackService trackService;
 
+    @Override
     @GetMapping
     public ResponseEntity<ResponseObject> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -36,6 +36,7 @@ public class CommentController {
         );
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<ResponseObject> UserCommentForTrack(@RequestBody CommentDto commentDto) {
         Optional<User> exsistUser = userService.findByUsername(commentDto.getUsername());
@@ -56,6 +57,7 @@ public class CommentController {
         );
     }
 
+    @Override
     @PutMapping("/repair-content")
     public ResponseEntity<ResponseObject> repairContentByUser(@RequestBody CommentDto commentDto) {
         Optional<Comment> exsist = commentService.findByIdAndUserUsername(commentDto.getId() , commentDto.getUsername());
@@ -71,6 +73,7 @@ public class CommentController {
         );
     }
 
+    @Override
     @DeleteMapping
     public ResponseEntity<ResponseObject> deleteComment(@RequestBody CommentDto commentDto) {
         Optional<Comment> exsistComment = commentService.findByIdAndUserUsername(commentDto.getId() , commentDto.getUsername());

@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.controllers;
 
+import com.spring.musicplayer5.controllers.impl.TrackControllerImpl;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.dto.TrackDto;
 import com.spring.musicplayer5.entity.Track;
@@ -7,11 +8,8 @@ import com.spring.musicplayer5.services.TrackService;
 import com.spring.musicplayer5.utils.component.ListID;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/track")
-public class TrackController {
+public class TrackController implements TrackControllerImpl {
 
     @Autowired
     private ListID listID;
@@ -30,6 +28,7 @@ public class TrackController {
     @Autowired
     private TrackService trackService;
 
+    @Override
     @GetMapping
     public ResponseEntity<ResponseObject> findAll() {
         List<Track> tracks = trackService.findAll();
@@ -49,6 +48,7 @@ public class TrackController {
         );
     }
     //Repair
+    @Override
     @GetMapping("/get_id")
     public ResponseEntity<ResponseObject> getById(@RequestParam long id) {
         Optional<Track> track = trackService.findById(id);
@@ -64,6 +64,7 @@ public class TrackController {
         );
     }
 
+    @Override
     @GetMapping("/search")
     public ResponseEntity<ResponseObject> getByTitle(@RequestParam String title) {
         List<Track> tracks = trackService.findByTitle(title);
@@ -84,6 +85,7 @@ public class TrackController {
     }
 
     //Code Pagination API : list of Tracks
+    @Override
     @GetMapping("/paging")
     public ResponseEntity<ResponseObject> getTracksPage(@RequestParam Integer page, @RequestParam Integer size) {
         Page<Track> tracks = trackService.findAll(PageRequest.of(page , size));
@@ -103,6 +105,7 @@ public class TrackController {
         );
     }
 
+    @Override
     @GetMapping("/get_top")
     public ResponseEntity<ResponseObject> getTopTrack(@RequestParam Integer size) {
         List<Track> tracks = trackService.findByTop(PageRequest.of(0 , size));

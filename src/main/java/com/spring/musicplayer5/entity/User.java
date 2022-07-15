@@ -15,9 +15,12 @@ public class User {
     private String username;
     private String password;
     private String fullName;
+    private String birthday;
     private String country;
-    private Integer age;
     private String image;
+    private Integer phone;
+    private String email;
+    private boolean isLocked = false;
 //    private String email;
 
     @ManyToOne

@@ -12,8 +12,5 @@ public interface PlaylistService {
     Optional<Playlist> findById(long id);
     Optional<Playlist> findByName(String name);
     void deleteById(long id);
-
     List<Playlist> findPlaylistByUsername(String username);
-
-
 }

@@ -38,4 +38,9 @@ public class CommentServiceImpl implements CommentService {
     public void deleteById(long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public Optional<Comment> findByUserUsername(String username) {
+        return repository.findByUserUsername(username);
+    }
 }

@@ -12,4 +12,5 @@ public interface PlaylistRepository extends JpaRepository<Playlist , Long> {
 
     @Query("select pl from Playlist pl where pl.user.username = ?1")
     List<Playlist> findPlaylistByUsername(String username);
+
 }

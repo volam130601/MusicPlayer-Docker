@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.controllers;
 
+import com.spring.musicplayer5.controllers.impl.PlaylistControllerImpl;
 import com.spring.musicplayer5.dto.PlaylistDto;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.entity.Playlist;
@@ -12,13 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/playlist")
-public class PlaylistController {
+public class PlaylistController implements PlaylistControllerImpl {
     @Autowired
     private PlaylistService playlistService;
 
@@ -27,6 +27,7 @@ public class PlaylistController {
     @Autowired
     private TrackPlaylistService trackPlaylistService;
 
+    @Override
     @GetMapping("")
     public ResponseEntity<ResponseObject> getAllPlaylist() {
         List<Playlist> playlists = playlistService.getAll();
@@ -41,6 +42,7 @@ public class PlaylistController {
     }
 
     //Change Playlist follow FE
+    @Override
     @PostMapping
     public ResponseEntity<ResponseObject> createPlaylist(@RequestBody PlaylistDto playlistDto) {
         Optional<Playlist> existsPL = playlistService.findByName(playlistDto.getName());
@@ -65,6 +67,7 @@ public class PlaylistController {
         );
     }
 
+    @Override
     @GetMapping("/getByUsername")
     public ResponseEntity<ResponseObject> getByUsername(@RequestParam String username) {
         List<Playlist> playlists= playlistService.findPlaylistByUsername(username);
@@ -78,6 +81,7 @@ public class PlaylistController {
         );
     }
 
+    @Override
     @PutMapping("/rename")
     public ResponseEntity<ResponseObject> renamePlaylist(@RequestParam String name, @RequestParam String rename) {
         Optional<Playlist> exists = playlistService.findByName(name);
@@ -101,6 +105,7 @@ public class PlaylistController {
     }
 
     //Change later
+    @Override
     @DeleteMapping
     public ResponseEntity<ResponseObject> deleteById(@RequestParam long id) {
         Optional<Playlist> exists = playlistService.findById(id);

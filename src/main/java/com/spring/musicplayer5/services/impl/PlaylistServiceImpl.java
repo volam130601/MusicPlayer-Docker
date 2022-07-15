@@ -42,4 +42,5 @@ public class PlaylistServiceImpl implements PlaylistService {
     public List<Playlist> findPlaylistByUsername(String username) {
         return playlistRepository.findPlaylistByUsername(username);
     }
+
 }
