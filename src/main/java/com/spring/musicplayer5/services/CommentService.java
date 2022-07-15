@@ -11,5 +11,6 @@ public interface CommentService {
     Optional<Comment> findById(long id);
     Optional<Comment> findByIdAndUserUsername(long id , String username);
     void deleteById(long id);
+    Optional<Comment> findByUserUsername(String username);
 
 }

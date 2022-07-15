@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.controllers;
 
+import com.spring.musicplayer5.controllers.impl.PlaylistHasTrackControllerImpl;
 import com.spring.musicplayer5.dto.PlaylistHasTrackDto;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.dto.TrackDto;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/playlist_has_track")
-public class PlaylistHasTrackController {
+public class PlaylistHasTrackController implements PlaylistHasTrackControllerImpl {
     @Autowired
     private TrackPlaylistService trackPlaylistService;
     @Autowired
@@ -30,6 +31,7 @@ public class PlaylistHasTrackController {
     @Autowired
     private PlaylistService playlistService;
 
+    @Override
     @GetMapping("/getAll")
     public ResponseEntity<ResponseObject> getAll() {
         List<TrackPlaylist> list = trackPlaylistService.getAll();
@@ -45,6 +47,7 @@ public class PlaylistHasTrackController {
         );
     }
 
+    @Override
     @GetMapping("/getByPlaylistId")
     public ResponseEntity<ResponseObject> getByIdPlaylist(@RequestParam long playlistId) {
         List<TrackPlaylist> list = trackPlaylistService.findByIdPlaylistId(playlistId);
@@ -59,6 +62,7 @@ public class PlaylistHasTrackController {
         );
     }
 
+    @Override
     @PostMapping("/addNew")
     public ResponseEntity<ResponseObject> saveTrackHasPlaylist(@RequestBody PlaylistHasTrackDto phl) {
         Optional<Track> existsTrack = trackService.findById(phl.getTrackId());
@@ -89,9 +93,10 @@ public class PlaylistHasTrackController {
         );
     }
 
+    @Override
     @DeleteMapping("/deleteByTrackIdInPlaylist")
-    public ResponseEntity<ResponseObject> deleteByTrackIdInPlaylist(@RequestParam(required=false) long playlistId ,
-                                                                    @RequestParam(required=false) long trackId) {
+    public ResponseEntity<ResponseObject> deleteByTrackIdInPlaylist(@RequestParam(required = false) long playlistId,
+                                                                    @RequestParam(required = false) long trackId) {
         if (trackPlaylistService.existsByIdTrackIdAndId_PlaylistId(trackId, playlistId)) {
             trackPlaylistService.deleteByIdPlaylistIdAndIdTrackId(playlistId ,trackId);
             return ResponseEntity.status(HttpStatus.OK).body(
