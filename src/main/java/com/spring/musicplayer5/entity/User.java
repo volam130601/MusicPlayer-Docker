@@ -21,7 +21,6 @@ public class User {
     private Integer phone;
     private String email;
     private boolean isLocked = false;
-//    private String email;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

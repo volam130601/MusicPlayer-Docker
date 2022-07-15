@@ -77,9 +77,10 @@ public class UserController extends FilesController implements UserControllerImp
         User updateUser = userService.findByUsername(userDto.getUsername())
                 .map(user -> {
                     user.setFullName(userDto.getFullName());
-                    user.setAge(userDto.getAge());
+                    user.setBirthday(userDto.getBirthday());
                     user.setCountry(userDto.getCountry());
-                    user.setImage(userDto.getImage());
+                    user.setPhone(userDto.getPhone());
+                    user.setEmail(userDto.getEmail());
                     return userService.save(user);
                 }).orElseGet(()->{
                     User user = new User();
