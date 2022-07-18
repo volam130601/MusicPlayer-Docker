@@ -96,10 +96,9 @@ public class UserController extends FilesController implements UserControllerImp
     @Override
     @PutMapping("/change_password")
     public ResponseEntity<ResponseObject> change_password(@RequestBody UserDto userDto) {
-        Optional<User> exists = userService.findByUsernameAndPassword(userDto.getUsername() , userDto.getPassword());
+        Optional<User> exists = userService.findByUsername(userDto.getUsername());
         if(exists.isPresent()) {
-            User user = new User();
-            BeanUtils.copyProperties(exists.get(), user);
+            User user = exists.get();
             user.setPassword(userDto.getNew_password());
             userService.save(user);
             return ResponseEntity.ok(

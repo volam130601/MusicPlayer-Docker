@@ -45,9 +45,11 @@ public class FilesController {
             if(exsistUser.isPresent()) {
                 splitFileName(request);
                 storageService.save(root, file);
-                System.out.println("........."+file.toString());
+                String tempURL = request.getRequestURL().toString();
+                String url = tempURL.substring(0,tempURL.length() - 6) + file.getOriginalFilename();
+//                url = url.replace("localhost",  "172.16.75.26");
                 User user = exsistUser.get();
-                user.setImage(file.getOriginalFilename());
+                user.setImage(url);
                 message = "Uploaded the file successfully: " + file.getOriginalFilename();
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK",message,  userService.save(user)));
             }

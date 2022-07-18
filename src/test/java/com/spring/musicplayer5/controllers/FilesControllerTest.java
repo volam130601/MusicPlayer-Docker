@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -50,5 +52,18 @@ class FilesControllerTest {
             System.out.println(s);
         }
     }
-
+    @Test
+    public void filterString() {
+        String temp = "http://localhost:8080/api/user/files/upload";
+        System.out.println(temp.substring(0,temp.length() - 6));
+        System.out.println(temp.replace("localhost",  "172.16.75.26"));
+    }
+    @Test
+    public void getIpAddress() {
+        try {
+            System.out.println("IP Address : " + Inet4Address.getLocalHost().getHostAddress());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
