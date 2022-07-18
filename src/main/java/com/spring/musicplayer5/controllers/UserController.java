@@ -10,20 +10,23 @@ import com.spring.musicplayer5.entity.Role;
 import com.spring.musicplayer5.entity.User;
 import com.spring.musicplayer5.services.CommentService;
 import com.spring.musicplayer5.services.PlaylistService;
+import com.spring.musicplayer5.services.StorageService;
 import com.spring.musicplayer5.services.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
-public class UserController extends FilesController implements UserControllerImpl {
+public class UserController  implements UserControllerImpl {
 
     @Autowired
     private UserService userService;
@@ -152,6 +155,49 @@ public class UserController extends FilesController implements UserControllerImp
         );
     }
 
+    @Autowired
+    private StorageService storageService;
 
+    @PostMapping("/files/upload")
+    public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute UserDto userDto) {
+        Optional<User> exsistUser = userService.findByUsername(userDto.getUsername());
+        if(!userDto.getImageFile().isEmpty() && exsistUser.isPresent()) {
+            UUID uuid = UUID.randomUUID();
+            String uuString = uuid.toString();
+            User user = exsistUser.get();
+            user.setImage(storageService.getStoredFilename(userDto.getImageFile(), uuString));
+            storageService.store(userDto.getImageFile() , user.getImage());
+            userService.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("OK" , "Save image of User is successfully!" , user)
+            );
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+                new ResponseObject("FAILED" , "Cannot saved image!")
+        );
+    }
 
+    //Read file Image : uploads/images ->client
+    @GetMapping("/images/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+        Resource file = storageService.loadAsResource(filename);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .contentType(MediaType.IMAGE_JPEG).body(file);
+    }
+
+    @GetMapping("/files/get_image")
+    public ResponseEntity<Resource> getImageByUser(@RequestParam String username) {
+        Optional<User> exist = userService.findByUsername(username);
+        if(exist.isPresent()) {
+            Resource file = storageService.loadAsResource(exist.get().getImage());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                    .contentType(MediaType.IMAGE_JPEG).body(file);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(null);
+    }
 }

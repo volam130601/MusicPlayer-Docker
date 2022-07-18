@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,6 +18,8 @@ public class UserDto {
     private String birthday;
     private String country;
     private String image;
+    private MultipartFile imageFile;
+
     private Integer phone;
     private String email;
     private boolean isLocked;

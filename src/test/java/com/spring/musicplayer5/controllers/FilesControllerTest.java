@@ -1,26 +1,17 @@
 package com.spring.musicplayer5.controllers;
 
-import com.spring.musicplayer5.services.FilesStorageService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 
 @SpringBootTest
 class FilesControllerTest {
-    @Autowired
-    FilesStorageService filesStorageService;
 
     @Test
     public void testCreateDirectory() throws IOException, URISyntaxException {
