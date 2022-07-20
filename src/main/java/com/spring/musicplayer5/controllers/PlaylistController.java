@@ -71,7 +71,7 @@ public class PlaylistController implements PlaylistControllerImpl {
     @GetMapping("/getByUsername")
     public ResponseEntity<ResponseObject> getByUsername(@RequestParam String username) {
         List<Playlist> playlists= playlistService.findPlaylistByUsername(username);
-        if(playlists != null) {
+        if(!playlists.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("OK", "Get Playlist By Username is Successfully!", playlists)
             );

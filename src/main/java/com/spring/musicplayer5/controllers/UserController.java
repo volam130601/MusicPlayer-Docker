@@ -10,20 +10,24 @@ import com.spring.musicplayer5.entity.Role;
 import com.spring.musicplayer5.entity.User;
 import com.spring.musicplayer5.services.CommentService;
 import com.spring.musicplayer5.services.PlaylistService;
+import com.spring.musicplayer5.services.StorageService;
 import com.spring.musicplayer5.services.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
-public class UserController extends FilesController implements UserControllerImpl {
+public class UserController  implements UserControllerImpl {
 
     @Autowired
     private UserService userService;
@@ -96,10 +100,9 @@ public class UserController extends FilesController implements UserControllerImp
     @Override
     @PutMapping("/change_password")
     public ResponseEntity<ResponseObject> change_password(@RequestBody UserDto userDto) {
-        Optional<User> exists = userService.findByUsernameAndPassword(userDto.getUsername() , userDto.getPassword());
+        Optional<User> exists = userService.findByUsername(userDto.getUsername());
         if(exists.isPresent()) {
-            User user = new User();
-            BeanUtils.copyProperties(exists.get(), user);
+            User user = exists.get();
             user.setPassword(userDto.getNew_password());
             userService.save(user);
             return ResponseEntity.ok(
@@ -132,14 +135,17 @@ public class UserController extends FilesController implements UserControllerImp
     public ResponseEntity<ResponseObject> deleteAllNotConstraint() {
         List<User> userList = userService.findAll();
         List<String> removeList = new ArrayList<>();
-        userList.forEach(user -> {
-                    List<Playlist> exsits = playlistService.findPlaylistByUsername(user.getUsername());
-                    Optional<Comment> exsits_2 = commentService.findByUserUsername(user.getUsername());
-                    if(exsits.isEmpty() && !exsits_2.isPresent()) {
-                        userService.deleteByUsername(user.getUsername());
-                        removeList.add(user.getUsername());
-                    }
-                });
+//        for (User user : userList) {
+//            List<Playlist> exsits = playlistService.findPlaylistByUsername(user.getUsername());
+//            Optional<Comment> exsits_2 = commentService.findByUserUsername(user.getUsername());
+//
+////            if (exsits.isEmpty() && !exsits_2.isPresent()) {
+////                removeList.add(user.getUsername());
+////            }
+//        }
+////        for (String user : removeList) {
+////            userService.deleteByUsername(user);
+////        }
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK" , removeList.isEmpty() ? "No accounts have been deleted!" : "Delete All User Successfully!" , removeList)
         );
@@ -153,6 +159,48 @@ public class UserController extends FilesController implements UserControllerImp
         );
     }
 
+    @Autowired
+    private StorageService storageService;
 
+    @PostMapping("/files/upload")
+    public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute UserDto userDto) throws IOException {
+        Optional<User> exsistUser = userService.findByUsername(userDto.getUsername());
+        if(!userDto.getImageFile().isEmpty() && exsistUser.isPresent()) {
+            UUID uuid = UUID.randomUUID();
+            String uuString = uuid.toString();
+            User user = exsistUser.get();
+            storageService.delete(user.getImage() != null ? user.getImage() : "null");
+            user.setImage(storageService.getStoredFilename(userDto.getImageFile(), uuString));
+            storageService.store(userDto.getImageFile() , user.getImage());
+            userService.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("OK" , "Save image of User is successfully!" , user)
+            );
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+                new ResponseObject("FAILED" , "Cannot saved image!")
+        );
+    }
 
+    @GetMapping("/images/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+        Resource file = storageService.loadAsResource(filename);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .contentType(MediaType.IMAGE_JPEG).body(file);
+    }
+
+    @GetMapping("/files/get_image")
+    public ResponseEntity<Resource> getImageByUser(@RequestParam String username) {
+        Optional<User> exist = userService.findByUsername(username);
+        if(exist.isPresent()) {
+            Resource file = storageService.loadAsResource(exist.get().getImage());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                    .contentType(MediaType.IMAGE_JPEG).body(file);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(null);
+    }
 }
