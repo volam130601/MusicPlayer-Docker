@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ArtistService {
-    List<Artist> getAll();
+    List<Artist> findAll();
     Artist save(Artist entity);
     Optional<Artist> findById(long id);
     void deleteById(long id);
