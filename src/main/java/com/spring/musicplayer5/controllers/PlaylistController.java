@@ -18,7 +18,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/playlist")
-public class PlaylistController implements PlaylistControllerImpl {
+public class
+PlaylistController implements PlaylistControllerImpl {
     @Autowired
     private PlaylistService playlistService;
 
@@ -46,11 +47,6 @@ public class PlaylistController implements PlaylistControllerImpl {
     @PostMapping
     public ResponseEntity<ResponseObject> createPlaylist(@RequestBody PlaylistDto playlistDto) {
         Optional<Playlist> existsPL = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
-        System.out.println(
-
-
-
-                playlistDto.toString());
         if(!existsPL.isPresent()) {
             Optional<User> user = userService.findByUsername(playlistDto.getUsername());
             if(user.isPresent()) {
