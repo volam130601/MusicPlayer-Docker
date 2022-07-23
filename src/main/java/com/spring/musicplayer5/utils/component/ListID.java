@@ -31,25 +31,37 @@ public class ListID {
 
     public List<Long> ids_rapidAPI() throws IOException {
         OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url("https://deezerdevs-deezer.p.rapidapi.com/search?q=eminem")
-                .get()
-                .addHeader("X-RapidAPI-Key", "4dd52768admshc84996327dfdd8cp18363ajsn766e280ff097")
-                .addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
-                .build();
-
-        Response response = client.newCall(request).execute();
-        ObjectMapper objectMapper = new ObjectMapper();
-        ResponseBody responseBody = client.newCall(request).execute().body();
-        JSONObject jsonObject = new JSONObject(responseBody.string());
-        JSONArray jsonArray = jsonObject.getJSONArray("data");
-        //List ID of *Search API in RapidID
+        List<String> list = new ArrayList<>();
+        list.add("eminem");
+        list.add("justin%20bieber");
+        list.add("maroon");
+        list.add("Taylor%20Swift");
+        list.add("Martin%20Garrix");
+        list.add("son%20tung");
+        list.add("Chillies");
         List<Long> ids = new ArrayList<>();
-        for(int i = 0 ; i < jsonArray.length() ; i++) {
-            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-            ids.add(jsonObject1.getLong("id"));
-//                System.out.println(searchMapper.mapperValue(jsonObject1));
+        for (int i = 0 ; i < list.size() ; i++) {
+            String str = list.get(i);
+            System.out.println(str);
+            Request request = new Request.Builder()
+                    .url("https://deezerdevs-deezer.p.rapidapi.com/search?q="+str)
+                    .get()
+                    .addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
+                    .addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            ObjectMapper objectMapper = new ObjectMapper();
+            ResponseBody responseBody = client.newCall(request).execute().body();
+            JSONObject jsonObject = new JSONObject(responseBody.string());
+            if (!jsonObject.toString().contains("error")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("data");
+                //List ID of *Search API in RapidID
+                for(int j = 0 ; j < jsonArray.length() ; j++) {
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(j);
+                    ids.add(jsonObject1.getLong("id"));
+                }
+            } else i--;
         }
         return ids;
     }

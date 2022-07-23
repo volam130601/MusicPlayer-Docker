@@ -16,14 +16,17 @@ public class Album {
     private long id;
     private String title;
     private String label;
+    private String link;
     private String cover;
     private String cover_small;
     private String cover_medium;
     private String cover_big;
-
-    private String link;
-    private Date release_date;
+    private String cover_xl;
+    private String release_date;
+    private String tracklist;
     private Integer fans;
+    private Integer duration;
+    private Integer nb_tracks;
 
     @ManyToOne
     @JoinColumn(name = "genre_id")
