@@ -45,7 +45,12 @@ public class PlaylistController implements PlaylistControllerImpl {
     @Override
     @PostMapping
     public ResponseEntity<ResponseObject> createPlaylist(@RequestBody PlaylistDto playlistDto) {
-        Optional<Playlist> existsPL = playlistService.findByName(playlistDto.getName());
+        Optional<Playlist> existsPL = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
+        System.out.println(
+
+
+
+                playlistDto.toString());
         if(!existsPL.isPresent()) {
             Optional<User> user = userService.findByUsername(playlistDto.getUsername());
             if(user.isPresent()) {
@@ -83,14 +88,14 @@ public class PlaylistController implements PlaylistControllerImpl {
 
     @Override
     @PutMapping("/rename")
-    public ResponseEntity<ResponseObject> renamePlaylist(@RequestParam String name, @RequestParam String rename) {
-        Optional<Playlist> exists = playlistService.findByName(name);
+    public ResponseEntity<ResponseObject> renamePlaylist(@RequestBody PlaylistDto playlistDto) {
+        Optional<Playlist> exists = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
         if(exists.isPresent()) {
-            Optional<User> user = userService.findByUsername("lamlbx123");
+            Optional<User> user = userService.findByUsername(playlistDto.getUsername());
             if(user.isPresent()) {
                 Playlist playlist = Playlist.builder()
                         .id(exists.get().getId())
-                        .name(rename)
+                        .name(playlistDto.getRename())
                         .user(user.get())
                         .build();
                 playlistService.save(playlist);
@@ -99,8 +104,8 @@ public class PlaylistController implements PlaylistControllerImpl {
                 );
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("FAILED" , "Name is exists or failed!", "")
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ResponseObject("FAILED" , "Cannot found name or username!", "")
         );
     }
 

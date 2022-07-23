@@ -17,7 +17,7 @@ public interface PlaylistControllerImpl {
     ResponseEntity<ResponseObject> getByUsername(@RequestParam String username);
 
     @PutMapping("/rename")
-    ResponseEntity<ResponseObject> renamePlaylist(@RequestParam String name, @RequestParam String rename);
+    ResponseEntity<ResponseObject> renamePlaylist(@RequestBody PlaylistDto playlistDto);
 
     //Change later
     @DeleteMapping
