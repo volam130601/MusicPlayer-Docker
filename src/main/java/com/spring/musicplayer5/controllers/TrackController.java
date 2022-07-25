@@ -5,7 +5,7 @@ import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.dto.TrackDto;
 import com.spring.musicplayer5.entity.Track;
 import com.spring.musicplayer5.services.TrackService;
-import com.spring.musicplayer5.utils.component.ListID;
+import com.spring.musicplayer5.utils.ListID;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

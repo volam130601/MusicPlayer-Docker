@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GenreService {
-    List<Genre> getAll();
+    List<Genre> findAll();
     Genre save(Genre entity);
     Optional<Genre> findById(long id);
     void deleteById(long id);

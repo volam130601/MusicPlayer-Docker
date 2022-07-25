@@ -16,8 +16,6 @@ public class    TrackDtoMap {
     private String preview;
     private Object artist;
     private Object album;
-    private ArtistDtoMap artistDtoMap;
-    private AlbumDtoMap albumDtoMap;
     private Integer rank;
 
     private String md5_image;

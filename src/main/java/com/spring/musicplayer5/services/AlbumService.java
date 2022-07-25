@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AlbumService {
-    List<Album> getAll();
+    List<Album> findAll();
     Album save(Album entity);
     Optional<Album> findById(long id);
     void deleteById(long id);

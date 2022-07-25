@@ -17,7 +17,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Autowired
     private AlbumRepository albumRepository;
     @Override
-    public List<Album> getAll() {
+    public List<Album> findAll() {
         return albumRepository.findAll();
     }
 

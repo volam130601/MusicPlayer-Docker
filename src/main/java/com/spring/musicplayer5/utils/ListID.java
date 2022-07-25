@@ -1,4 +1,4 @@
-package com.spring.musicplayer5.utils.component;
+package com.spring.musicplayer5.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.musicplayer5.entity.Track;
@@ -18,16 +18,6 @@ import java.util.List;
 
 @Component
 public class ListID {
-
-    @Autowired
-    private TrackRepository trackRepository;
-
-    public List<Long> ids() {
-        List<Track> track = trackRepository.findAll();
-        List<Long> ids = new ArrayList<>();
-        track.forEach(t -> ids.add(t.getId()));
-        return ids;
-    }
 
     public List<Long> ids_rapidAPI() throws IOException {
         OkHttpClient client = new OkHttpClient();

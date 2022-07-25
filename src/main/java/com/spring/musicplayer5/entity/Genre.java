@@ -13,6 +13,10 @@ public class Genre {
     private long id;
     private String name;
     private String picture;
+    private String picture_small;
+    private String picture_medium;
+    private String picture_big;
+    private String picture_xl;
 
     @OneToMany(mappedBy = "genre")
     @EqualsAndHashCode.Exclude

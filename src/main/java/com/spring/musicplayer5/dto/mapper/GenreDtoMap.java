@@ -15,5 +15,4 @@ public class GenreDtoMap {
     private String picture_big;
     private String picture_xl;
     private String type;
-
 }

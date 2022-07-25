@@ -49,7 +49,7 @@ public class AlbumController implements AlbumControllerImpl {
     @Override
     @GetMapping
     public ResponseEntity<ResponseObject> getAll() {
-        List<Album> albums = albumService.getAll();
+        List<Album> albums = albumService.findAll();
         List<AlbumOfTrackDto> albumOfTrackDtoList = new ArrayList<>();
         albums.forEach(album -> {
             List<Track> trackList = trackService.findByAlbum_Id(album.getId());
