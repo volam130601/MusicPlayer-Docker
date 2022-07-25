@@ -33,7 +33,7 @@ class AlbumControllerTest {
     private GenreService genreService;
     @Test
     void pushDataIntoAlbum() throws IOException, JSONException, ParseException {
-        List<Album> albums = albumService.getAll();
+        List<Album> albums = albumService.findAll();
         List<Long> ids = new ArrayList<>();
         for (Album album : albums) {
             ids.add(album.getId());
@@ -94,7 +94,7 @@ class AlbumControllerTest {
 
     @Test
     void getAllAlbumOfTrack() {
-        List<Album> albums = albumService.getAll();
+        List<Album> albums = albumService.findAll();
         System.out.println(albums);
         List<AlbumOfTrackDto> albumOfTrackDtoList = new ArrayList<>();
         albums.forEach(album -> {
