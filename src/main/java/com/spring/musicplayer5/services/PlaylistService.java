@@ -11,7 +11,7 @@ public interface PlaylistService {
     Playlist save(Playlist entity);
     Optional<Playlist> findById(long id);
     Optional<Playlist> findByName(String name);
-    Optional<Playlist> findByNameAndUserUsername(String name , String username);
+    List<Playlist> findByNameAndUserUsername(String name , String username);
     void deleteById(long id);
     List<Playlist> findPlaylistByUsername(String username);
 }

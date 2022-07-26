@@ -46,8 +46,8 @@ PlaylistController implements PlaylistControllerImpl {
     @Override
     @PostMapping
     public ResponseEntity<ResponseObject> createPlaylist(@RequestBody PlaylistDto playlistDto) {
-        Optional<Playlist> existsPL = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
-        if(!existsPL.isPresent()) {
+        List<Playlist> existsPL = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
+        if(existsPL.isEmpty()) {
             Optional<User> user = userService.findByUsername(playlistDto.getUsername());
             if(user.isPresent()) {
                 Playlist playlist = Playlist.builder()
@@ -86,13 +86,11 @@ PlaylistController implements PlaylistControllerImpl {
     @Override
     @PutMapping("/rename")
     public ResponseEntity<ResponseObject> renamePlaylist(@RequestBody PlaylistDto playlistDto) {
-        System.out.println(playlistDto);
-        Optional<Playlist> exists = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
-        if(exists.isPresent()) {
+        List<Playlist> exists = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
+        if(!exists.isEmpty()) {
             Optional<User> user = userService.findByUsername(playlistDto.getUsername());
-            System.out.println(user);
             Playlist playlist = Playlist.builder()
-                    .id(exists.get().getId())
+                    .id(exists.get(0).getId())
                     .name(playlistDto.getRename())
                     .user(user.get())
                     .build();

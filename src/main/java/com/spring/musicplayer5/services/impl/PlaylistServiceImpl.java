@@ -44,7 +44,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public Optional<Playlist> findByNameAndUserUsername(String name, String username) {
+    public List<Playlist> findByNameAndUserUsername(String name, String username) {
         return playlistRepository.findByNameAndUserUsername(name , username);
     }
 }
