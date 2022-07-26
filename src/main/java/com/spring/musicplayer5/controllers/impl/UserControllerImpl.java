@@ -24,8 +24,8 @@ public interface UserControllerImpl {
     @PutMapping("/locked_account")
     ResponseEntity<ResponseObject> locked_account(@RequestBody UserDto userDto);
 
-    @DeleteMapping("/delete_all")
-    ResponseEntity<ResponseObject> deleteAllNotConstraint();
+//    @DeleteMapping("/delete_all")
+//    ResponseEntity<ResponseObject> deleteAllNotConstraint();
 
     @GetMapping
     ResponseEntity<ResponseObject> getAllUser();

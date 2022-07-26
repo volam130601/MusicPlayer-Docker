@@ -2,14 +2,11 @@ package com.spring.musicplayer5.controllers;
 
 import com.spring.musicplayer5.controllers.impl.TrackControllerImpl;
 import com.spring.musicplayer5.dto.ResponseObject;
-import com.spring.musicplayer5.dto.TrackDto;
 import com.spring.musicplayer5.entity.Track;
 import com.spring.musicplayer5.services.TrackService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,20 +27,9 @@ public class TrackController implements TrackControllerImpl {
     @Override
     @GetMapping
     public ResponseEntity<ResponseObject> findAll() {
-        List<Track> tracks = trackService.findByTop(PageRequest.of(0 , 100));
-        List<TrackDto> trackDtos = new ArrayList<>();
-        for (Track track : tracks) {
-            TrackDto trackDto = new TrackDto();
-            BeanUtils.copyProperties(track , trackDto);
-            trackDtos.add(trackDto);
-        }
-        if(!trackDtos.isEmpty()) {
-            return ResponseEntity.ok(
-                    new ResponseObject("OK", "Get Data Track Successfully!" ,trackDtos)
-            );
-        }
+        Page<Track> tracks = trackService.findAll(PageRequest.of(0, 100));
         return ResponseEntity.ok(
-                new ResponseObject("FAILED", "Get Data Track Failed!" , "ERROR!")
+                new ResponseObject("OK", "Get Data Track Successfully!" ,tracks.toList())
         );
     }
     //Repair
@@ -52,13 +37,10 @@ public class TrackController implements TrackControllerImpl {
     @GetMapping("/get_id")
     public ResponseEntity<ResponseObject> getById(@RequestParam long id) {
         Optional<Track> track = trackService.findById(id);
-        if(track.isPresent()) {
-            TrackDto trackDto = new TrackDto();
-            BeanUtils.copyProperties(track.get(), trackDto);
+        if(track.isPresent())
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Get Data Track Successfully!" , trackDto)
+                    new ResponseObject("OK", "Get Data Track Successfully!" , track.get())
             );
-        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("FAILED", "Cannot found Track Failed!" , "ERROR!")
         );
@@ -69,14 +51,8 @@ public class TrackController implements TrackControllerImpl {
     public ResponseEntity<ResponseObject> getByTitle(@RequestParam String title) {
         List<Track> tracks = trackService.findByTitle(title);
         if(!tracks.isEmpty()) {
-            List<TrackDto> trackDtos = new ArrayList<>();
-            for(Track track : tracks) {
-                TrackDto trackDto = new TrackDto();
-                BeanUtils.copyProperties(track , trackDto);
-                trackDtos.add(trackDto);
-            }
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Search Track Successfully!" , trackDtos)
+                    new ResponseObject("OK", "Search Track Successfully!" , tracks)
             );
         }
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -89,15 +65,9 @@ public class TrackController implements TrackControllerImpl {
     @GetMapping("/paging")
     public ResponseEntity<ResponseObject> getTracksPage(@RequestParam Integer page, @RequestParam Integer size) {
         Page<Track> tracks = trackService.findAll(PageRequest.of(page , size));
-        List<TrackDto> trackDtos = new ArrayList<>();
-        tracks.forEach(t -> {
-            TrackDto trackDto = new TrackDto();
-            BeanUtils.copyProperties(t , trackDto);
-            trackDtos.add(trackDto);
-        });
-        if(!trackDtos.isEmpty()) {
+        if(!tracks.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Get page list of Tracks Successfully!" , trackDtos)
+                    new ResponseObject("OK", "Get page list of Tracks Successfully!" , tracks.toList())
             );
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -109,19 +79,8 @@ public class TrackController implements TrackControllerImpl {
     @GetMapping("/get_top")
     public ResponseEntity<ResponseObject> getTopTrack(@RequestParam Integer size) {
         List<Track> tracks = trackService.findByTop(PageRequest.of(0 , size));
-        List<TrackDto> trackDtos = new ArrayList<>();
-        tracks.forEach(t -> {
-            TrackDto trackDto = new TrackDto();
-            BeanUtils.copyProperties(t , trackDto);
-            trackDtos.add(trackDto);
-        });
-        if(!trackDtos.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Get Top "+size+" list of Tracks Successfully!" , trackDtos)
-            );
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ResponseObject("FAILED", "Cannot get Top of Track is Failed!" , "ERROR!")
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("OK", "Get Top "+size+" list of Tracks Successfully!" , tracks)
         );
     }
 }

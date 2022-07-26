@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,5 +22,6 @@ public class Genre {
     @OneToMany(mappedBy = "genre")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonIgnore
     private List<Album> albums;
 }

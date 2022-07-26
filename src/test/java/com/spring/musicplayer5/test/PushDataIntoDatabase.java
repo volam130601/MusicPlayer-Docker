@@ -64,10 +64,14 @@ public class PushDataIntoDatabase {
         getAll_Artist_fromRapidAPI();
         getAll_Album_fromArtist();
         getAll_Artist_fromAlbum();
+        getAll_Track_fromAlbumList();
+    }
+    @Test
+    void updateAll() throws JSONException, IOException {
         updateAlbum();
         updateGenre();
         updateArtist();
-        getAll_Track_fromAlbumList();
+        updateTrack();
     }
 
     @Test
@@ -158,7 +162,7 @@ public class PushDataIntoDatabase {
     }
 
     @Test
-    public void updateAlbum() throws IOException, JSONException {
+    void updateAlbum() throws IOException, JSONException {
         List<Album> albumList = albumService.findAll();
         OkHttpClient client = new OkHttpClient();
         for (int i = 0 ; i < albumList.size() ; i++){
@@ -182,8 +186,8 @@ public class PushDataIntoDatabase {
                     genre.setId(albumDtoMap.getGenre_id());
                     genreService.save(genre);
                     album.setGenre(genre);
-                    albumService.save(album);
                 }
+                albumService.save(album);
             } else i--;
         }
     }
@@ -216,7 +220,7 @@ public class PushDataIntoDatabase {
     }
 
     @Test
-    public void updateArtist() throws IOException, JSONException {
+    void updateArtist() throws IOException, JSONException {
         List<Artist> artistList = artistService.findAll();
         OkHttpClient client = new OkHttpClient();
         for (int i = 0 ; i < artistList.size() ; i++){

@@ -7,6 +7,8 @@ import com.spring.musicplayer5.repositories.ArtistRepository;
 import com.spring.musicplayer5.services.AlbumService;
 import com.spring.musicplayer5.services.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,5 +41,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public boolean existsById(Long id) {
         return albumRepository.existsById(id);
+    }
+
+    @Override
+    public Page<Album> findAll(Pageable pageable) {
+        return albumRepository.findAll(pageable);
     }
 }

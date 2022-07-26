@@ -32,7 +32,7 @@ public class Album {
     @JoinColumn(name = "genre_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @JsonIgnore
+//    @JsonIgnore
     private Genre genre;
 
     @OneToMany(mappedBy = "album")

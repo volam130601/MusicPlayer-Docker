@@ -16,7 +16,6 @@ public class TrackDto {
     private Integer duration;
     private String preview;
     private Integer rank;
-    private String image;
 
     private Object artist;
     private Object album;

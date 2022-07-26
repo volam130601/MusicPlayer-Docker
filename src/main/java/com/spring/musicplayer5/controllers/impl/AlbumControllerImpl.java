@@ -10,5 +10,5 @@ public interface AlbumControllerImpl {
     ResponseEntity<ResponseObject> getTracksBelongIdAlbum(@RequestParam long albumId);
 
     @GetMapping
-    ResponseEntity<ResponseObject> getAll();
+    ResponseEntity<ResponseObject> getTop5();
 }

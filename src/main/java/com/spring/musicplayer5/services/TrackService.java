@@ -19,6 +19,6 @@ public interface TrackService {
 
     List<Track> findByAlbum_Id(long id);
     List<Track> findByTop(Pageable pageable);
-    List<Track> findTopByRelease_date(String release_date, Sort sort);
+
 
 }

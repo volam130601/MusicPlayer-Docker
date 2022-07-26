@@ -3,11 +3,16 @@ package com.spring.musicplayer5.controllers;
 import com.spring.musicplayer5.controllers.impl.AlbumControllerImpl;
 import com.spring.musicplayer5.dto.AlbumOfTrackDto;
 import com.spring.musicplayer5.dto.ResponseObject;
+import com.spring.musicplayer5.dto.mapper.TrackDtoMap;
 import com.spring.musicplayer5.entity.Album;
 import com.spring.musicplayer5.entity.Track;
 import com.spring.musicplayer5.services.AlbumService;
 import com.spring.musicplayer5.services.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +35,7 @@ public class AlbumController implements AlbumControllerImpl {
     @Override
     @GetMapping("/get_track")
     public ResponseEntity<ResponseObject> getTracksBelongIdAlbum(@RequestParam long albumId) {
-        List<Track> tracks= trackService.findByAlbum_Id(albumId);
+        List<Track> tracks = trackService.findByAlbum_Id(albumId);
         Optional<Album> album = albumService.findById(albumId);
         if(!tracks.isEmpty() && album.isPresent()) {
             AlbumOfTrackDto albumOfTrackDto = AlbumOfTrackDto.builder()
@@ -38,7 +43,7 @@ public class AlbumController implements AlbumControllerImpl {
                     .tracks(tracks)
                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Get Track have Album_id Successfully!" , albumOfTrackDto)
+                    new ResponseObject("OK", "Get Track have Album_id Successfully!" , tracks , tracks.size())
             );
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -48,18 +53,10 @@ public class AlbumController implements AlbumControllerImpl {
 
     @Override
     @GetMapping
-    public ResponseEntity<ResponseObject> getAll() {
-        List<Album> albums = albumService.findAll();
-        List<AlbumOfTrackDto> albumOfTrackDtoList = new ArrayList<>();
-        albums.forEach(album -> {
-            List<Track> trackList = trackService.findByAlbum_Id(album.getId());
-            AlbumOfTrackDto albumOfTrackDto = AlbumOfTrackDto.builder()
-                    .album(album)
-                    .tracks(trackList).build();
-            albumOfTrackDtoList.add(albumOfTrackDto);
-        });
+    public ResponseEntity<ResponseObject> getTop5() {
+        Page<Album> albums = albumService.findAll(PageRequest.of(0 , 5 ));
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK", "Get Track have Album_id Successfully!" , albumOfTrackDtoList)
+                new ResponseObject("OK", "Get Track have Album_id Successfully!" , albums.toList(), albums.getSize())
         );
     }
 }

@@ -8,10 +8,7 @@ import com.spring.musicplayer5.entity.Comment;
 import com.spring.musicplayer5.entity.Playlist;
 import com.spring.musicplayer5.entity.Role;
 import com.spring.musicplayer5.entity.User;
-import com.spring.musicplayer5.services.CommentService;
-import com.spring.musicplayer5.services.PlaylistService;
-import com.spring.musicplayer5.services.StorageService;
-import com.spring.musicplayer5.services.UserService;
+import com.spring.musicplayer5.services.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -32,6 +29,8 @@ public class UserController  implements UserControllerImpl {
     @Autowired
     private UserService userService;
     @Autowired
+    private RoleService roleService;
+    @Autowired
     private PlaylistService playlistService;
     @Autowired
     private CommentService commentService;
@@ -42,15 +41,12 @@ public class UserController  implements UserControllerImpl {
     public ResponseEntity<ResponseObject> login(@RequestBody LoginRequestDto loginRequestDto) {
         Optional<User> exists = userService.findByUsernameAndPassword(loginRequestDto.getUsername() , loginRequestDto.getPassword());
         if(exists.isPresent()) {
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(exists.get(), userDto);
             return ResponseEntity.ok(
-                    new ResponseObject("OK", "Login success!" , userDto)
-
+                    new ResponseObject("OK", "Login success!" , exists.get())
             );
         }
         return ResponseEntity.ok(
-                new ResponseObject("FAILED", "Username or Password isn't exists or wrong!" , "failed")
+                new ResponseObject("FAILED", "Username or Password isn't exists or wrong!" , null)
         );
     }
 
@@ -61,13 +57,15 @@ public class UserController  implements UserControllerImpl {
         BeanUtils.copyProperties(loginRequestDTO , newUser);
         Optional<User> foundUser = userService.findByUsername(newUser.getUsername().trim());
         if(!foundUser.isPresent()) {
-            Role role = Role.builder().id(2).build();
+            List<Role> roles = roleService.findAll();
+            if(roles.isEmpty()) {
+                roleService.save(Role.builder().name("USER").code("USER").build());
+            }
+            Role role = Role.builder().id(1).build();
             newUser.setRole(role);
             userService.save(newUser);
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(newUser , userDto);
             return ResponseEntity.ok(
-                    new ResponseObject("OK", "Register Account is Success!" , userDto)
+                    new ResponseObject("OK", "Register Account is Success!" , newUser)
             );
         }
         return ResponseEntity.ok(
@@ -130,26 +128,19 @@ public class UserController  implements UserControllerImpl {
         );
     }
 
-    @Override
-    @DeleteMapping("/del_all_not_constraint")
-    public ResponseEntity<ResponseObject> deleteAllNotConstraint() {
-        List<User> userList = userService.findAll();
-        List<String> removeList = new ArrayList<>();
-//        for (User user : userList) {
-//            List<Playlist> exsits = playlistService.findPlaylistByUsername(user.getUsername());
-//            Optional<Comment> exsits_2 = commentService.findByUserUsername(user.getUsername());
-//
-////            if (exsits.isEmpty() && !exsits_2.isPresent()) {
-////                removeList.add(user.getUsername());
-////            }
-//        }
-////        for (String user : removeList) {
-////            userService.deleteByUsername(user);
-////        }
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK" , removeList.isEmpty() ? "No accounts have been deleted!" : "Delete All User Successfully!" , removeList)
-        );
-    }
+    //Lack of unlock for account
+    //////
+
+    //Function haven't built yet.
+//    @Override
+//    @DeleteMapping("/del_all_not_constraint")
+//    public ResponseEntity<ResponseObject> deleteAllNotConstraint() {
+//        List<User> userList = userService.findAll();
+//        List<String> removeList = new ArrayList<>();
+//        return ResponseEntity.status(HttpStatus.OK).body(
+//                new ResponseObject("OK" , removeList.isEmpty() ? "No accounts have been deleted!" : "Delete All User Successfully!" , removeList)
+//        );
+//    }
 
     @Override
     @GetMapping

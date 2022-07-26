@@ -22,7 +22,7 @@ public class TrackPlaylist {
     private Playlist playlist;
 
     @ManyToOne
-    @MapsId("track_id")
+    @MapsId(value = "track_id")
     @JoinColumn(name = "track_id")
     private Track track;
 }

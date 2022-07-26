@@ -15,13 +15,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 @Repository
 public interface TrackRepository extends JpaRepository<Track, Long> {
-
-    @Modifying
-    @Query("update Track t set t.artist = ?1 , t.album = ?2 where t.id = ?3")
-    int saveArtistAndAlbumById(Artist artist , Album album , Long trackId);
-
-    @Query("SELECT t FROM Track t")
-    Page<Track> findTracks(Pageable pageable);
+    @Query("SELECT t FROM Track t ORDER BY t.release_date DESC")
+    Page<Track> findAll(Pageable pageable);
 
     @Modifying
     @Query("SELECT t FROM Track t WHERE t.title like ?1%")
@@ -31,5 +26,4 @@ public interface TrackRepository extends JpaRepository<Track, Long> {
 
     @Query("SELECT t FROM Track t ORDER BY t.rank DESC")
     List<Track> findByTop(Pageable pageable);
-
-}
+;}
