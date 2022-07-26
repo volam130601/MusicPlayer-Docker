@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +31,16 @@ public class TrackController implements TrackControllerImpl {
     @Override
     @GetMapping
     public ResponseEntity<ResponseObject> findAll() {
-        List<Track> tracks = trackService.findAll();
-        tracks = tracks.subList(0, 100);
-        if(!tracks.isEmpty()) {
+        List<Track> tracks = trackService.findByTop(PageRequest.of(0 , 100));
+        List<TrackDto> trackDtos = new ArrayList<>();
+        for (Track track : tracks) {
+            TrackDto trackDto = new TrackDto();
+            BeanUtils.copyProperties(track , trackDto);
+            trackDtos.add(trackDto);
+        }
+        if(!trackDtos.isEmpty()) {
             return ResponseEntity.ok(
-                    new ResponseObject("OK", "Get Data Track Successfully!" ,tracks)
+                    new ResponseObject("OK", "Get Data Track Successfully!" ,trackDtos)
             );
         }
         return ResponseEntity.ok(
