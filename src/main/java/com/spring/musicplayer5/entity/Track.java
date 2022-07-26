@@ -18,7 +18,7 @@ public class Track {
     private String link;
     private Integer duration;
     private String preview;
-    private String image;
+    private String release_date;
 
     @Column(name = "ranks")
     private Integer rank;

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @AllArgsConstructor @NoArgsConstructor
-public class    TrackDtoMap {
+public class TrackDtoMap {
     private long id;
     private String title;
     private String link;
@@ -17,6 +17,7 @@ public class    TrackDtoMap {
     private Object artist;
     private Object album;
     private Integer rank;
+    private String release_date;
 
     private String md5_image;
     private String type;
@@ -33,7 +34,6 @@ public class    TrackDtoMap {
     private String explicit_lyrics;
     private Integer disk_number;
     private Object available_countries;
-    private String release_date;
     private Object contributors;
 }
 

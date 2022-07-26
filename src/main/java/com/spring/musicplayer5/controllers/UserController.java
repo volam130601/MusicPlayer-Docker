@@ -165,6 +165,7 @@ public class UserController  implements UserControllerImpl {
     @PostMapping("/files/upload")
     public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute UserDto userDto) throws IOException {
         Optional<User> exsistUser = userService.findByUsername(userDto.getUsername());
+        System.out.println("<><>"+userDto);
         if(!userDto.getImageFile().isEmpty() && exsistUser.isPresent()) {
             UUID uuid = UUID.randomUUID();
             String uuString = uuid.toString();
@@ -179,6 +180,14 @@ public class UserController  implements UserControllerImpl {
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                 new ResponseObject("FAILED" , "Cannot saved image!")
+        );
+    }
+
+    @PostMapping("/files/upload/test")
+    public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute MultipartFile imageFile) throws IOException {
+        System.out.println(imageFile);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("OK" , "Save image of User is successfully!" , "user")
         );
     }
 

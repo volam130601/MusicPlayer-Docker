@@ -5,14 +5,16 @@ import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.dto.TrackDto;
 import com.spring.musicplayer5.entity.Track;
 import com.spring.musicplayer5.services.TrackService;
-import com.spring.musicplayer5.utils.ListID;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,24 +25,16 @@ import java.util.Optional;
 public class TrackController implements TrackControllerImpl {
 
     @Autowired
-    private ListID listID;
-
-    @Autowired
     private TrackService trackService;
 
     @Override
     @GetMapping
     public ResponseEntity<ResponseObject> findAll() {
         List<Track> tracks = trackService.findAll();
-        List<TrackDto> trackDtos = new ArrayList<>();
-        for (Track track : tracks) {
-            TrackDto trackDto = new TrackDto();
-            BeanUtils.copyProperties(track , trackDto);
-            trackDtos.add(trackDto);
-        }
-        if(!trackDtos.isEmpty()) {
+        tracks = tracks.subList(0, 100);
+        if(!tracks.isEmpty()) {
             return ResponseEntity.ok(
-                    new ResponseObject("OK", "Get Data Track Successfully!" , trackDtos)
+                    new ResponseObject("OK", "Get Data Track Successfully!" ,tracks)
             );
         }
         return ResponseEntity.ok(

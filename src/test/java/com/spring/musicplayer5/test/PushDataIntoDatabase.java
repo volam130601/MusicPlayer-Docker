@@ -10,6 +10,9 @@ import com.spring.musicplayer5.entity.Album;
 import com.spring.musicplayer5.entity.Artist;
 import com.spring.musicplayer5.entity.Genre;
 import com.spring.musicplayer5.entity.Track;
+import com.spring.musicplayer5.repositories.AlbumRepository;
+import com.spring.musicplayer5.repositories.ArtistRepository;
+import com.spring.musicplayer5.repositories.TrackRepository;
 import com.spring.musicplayer5.services.AlbumService;
 import com.spring.musicplayer5.services.ArtistService;
 import com.spring.musicplayer5.services.GenreService;
@@ -33,8 +36,6 @@ import java.util.*;
 
 @SpringBootTest
 public class PushDataIntoDatabase {
-    @Autowired
-    private ListID listID;
 
     @Autowired
     private TrackService trackService;
@@ -66,6 +67,7 @@ public class PushDataIntoDatabase {
         updateAlbum();
         updateGenre();
         updateArtist();
+        getAll_Track_fromAlbumList();
     }
 
     @Test
@@ -269,23 +271,27 @@ public class PushDataIntoDatabase {
     }
 
     @Test
-    void updateTrack() {
-
-    }
-    static boolean checkAlbum_Title(List<Album> albumList , String title) {
-        for (Album album : albumList)
-            if(album.getTitle().equals(title)) return false;
-        return true;
-    }
-    static boolean checkTrack_Title(List<Track> trackList , String title) {
-        for (Track track : trackList)
-            if(track.getTitle().equals(title)) return false;
-        return true;
-    }
-    static boolean checkTrackInAlbum(List<Album> albumList , Album album) {
-        for (Album alb : albumList)
-            if(alb.getId() == album.getId()) return true;
-        return false;
+    void updateTrack() throws IOException, JSONException {
+        List<Track> trackList = trackService.findAll();
+        OkHttpClient client = new OkHttpClient();
+        for (int i = 0 ; i < trackList.size() ; i++){
+            Track track = trackList.get(i);
+            Request request = new Request.Builder()
+                    	.url("https://deezerdevs-deezer.p.rapidapi.com/track/"+track.getId())
+                    	.get()
+                    	.addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
+                    	.addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
+                    	.build();
+            Response response = client.newCall(request).execute();
+            ObjectMapper objectMapper = new ObjectMapper();
+            ResponseBody responseBody = client.newCall(request).execute().body();
+            JSONObject jsonObject = new JSONObject(responseBody.string());
+            if (!jsonObject.toString().contains("\"error\"")) {
+                TrackDtoMap trackDtoMap = objectMapper.readValue(jsonObject.toString() , TrackDtoMap.class);
+                BeanUtils.copyProperties(trackDtoMap, track);
+                trackService.save(track);
+            } else i--;
+        }
     }
 
 }
