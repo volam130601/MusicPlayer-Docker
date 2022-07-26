@@ -68,10 +68,10 @@ public class PushDataIntoDatabase {
     }
     @Test
     void updateAll() throws JSONException, IOException {
-        updateAlbum();
-        updateGenre();
-        updateArtist();
-        updateTrack();
+//        updateAlbum();
+//        updateGenre();
+//        updateArtist();
+//        updateTrack();
     }
 
     @Test
@@ -162,33 +162,68 @@ public class PushDataIntoDatabase {
     }
 
     @Test
+    void getAll_Track_fromAlbumList() throws JSONException, IOException {
+        OkHttpClient client = new OkHttpClient();
+        List<Album> albumList = albumService.findAll();
+        for(Album  album : albumList) {
+            Request request = new Request.Builder()
+                    .url(album.getTracklist())
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            ObjectMapper objectMapper = new ObjectMapper();
+            ResponseBody responseBody = client.newCall(request).execute().body();
+            JSONObject jsonObject = new JSONObject(responseBody.string());
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            for(int i = 0 ; i < jsonArray.length() ; i++) {
+                JSONObject _jsonObject = jsonArray.getJSONObject(i);
+                TrackDtoMap trackDtoMap = objectMapper.readValue(_jsonObject.toString() , TrackDtoMap.class);
+                ArtistDtoMap artistDtoMap = objectMapper.convertValue(trackDtoMap.getArtist(), ArtistDtoMap.class);
+                Track track = new Track();
+                BeanUtils.copyProperties(trackDtoMap, track);
+                Artist artist = new Artist();
+                BeanUtils.copyProperties(artistDtoMap , artist);
+                track.setAlbum(album);
+                track.setArtist(artist);
+                trackService.save(track);
+                System.out.println(track);
+            }
+        }
+    }
+
+    @Test
     void updateAlbum() throws IOException, JSONException {
         List<Album> albumList = albumService.findAll();
         OkHttpClient client = new OkHttpClient();
         for (int i = 0 ; i < albumList.size() ; i++){
             Album album = albumList.get(i);
-            Request request = new Request.Builder()
-                    .url("https://deezerdevs-deezer.p.rapidapi.com/album/"+album.getId())
-                    .get()
-                    .addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
-                    .addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
-                    .build();
+            if(album.getNb_tracks() == null) {
+                Request request = new Request.Builder()
+                        .url("https://deezerdevs-deezer.p.rapidapi.com/album/"+album.getId())
+                        .get()
+                        .addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
+                        .addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
+                        .build();
 
-            Response response = client.newCall(request).execute();
-            ObjectMapper objectMapper = new ObjectMapper();
-            ResponseBody responseBody = client.newCall(request).execute().body();
-            JSONObject jsonObject = new JSONObject(responseBody.string());
-            if (!jsonObject.toString().contains("\"error\"")) {
-                AlbumDtoMap albumDtoMap = objectMapper.readValue(jsonObject.toString() , AlbumDtoMap.class);
-                BeanUtils.copyProperties(albumDtoMap, album);
-                Genre genre = new Genre();
-                if(albumDtoMap.getGenre_id() > 0) {
-                    genre.setId(albumDtoMap.getGenre_id());
-                    genreService.save(genre);
-                    album.setGenre(genre);
-                }
-                albumService.save(album);
-            } else i--;
+                Response response = client.newCall(request).execute();
+                ObjectMapper objectMapper = new ObjectMapper();
+                ResponseBody responseBody = client.newCall(request).execute().body();
+                JSONObject jsonObject = new JSONObject(responseBody.string());
+                System.out.println(jsonObject.toString());
+                if (!jsonObject.toString().contains("\"error\"")) {
+                    AlbumDtoMap albumDtoMap = objectMapper.readValue(jsonObject.toString() , AlbumDtoMap.class);
+                    BeanUtils.copyProperties(albumDtoMap, album);
+                    Genre genre = new Genre();
+                    Optional<Genre> genreExists = genreService.findById(albumDtoMap.getGenre_id());
+                    if(genreExists.isPresent()) genre = genreExists.get();
+                    if(albumDtoMap.getGenre_id() > 0) {
+                        genre.setId(albumDtoMap.getGenre_id());
+                        genreService.save(genre);
+                        album.setGenre(genre);
+                    }
+                    albumService.save(album);
+                } else i--;
+            }
         }
     }
 
@@ -225,51 +260,23 @@ public class PushDataIntoDatabase {
         OkHttpClient client = new OkHttpClient();
         for (int i = 0 ; i < artistList.size() ; i++){
             Artist artist = artistList.get(i);
-            Request request = new Request.Builder()
-                    .url("https://deezerdevs-deezer.p.rapidapi.com/artist/"+artist.getId())
-                    .get()
-                    .addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
-                    .addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
-                    .build();
-
-            Response response = client.newCall(request).execute();
-            ObjectMapper objectMapper = new ObjectMapper();
-            ResponseBody responseBody = client.newCall(request).execute().body();
-            JSONObject jsonObject = new JSONObject(responseBody.string());
-            if (!jsonObject.toString().contains("\"error\"")) {
-                ArtistDtoMap artistDtoMap = objectMapper.readValue(jsonObject.toString() , ArtistDtoMap.class);
-                BeanUtils.copyProperties(artistDtoMap, artist);
-                artistService.save(artist);
-            } else i--;
-        }
-    }
-
-    @Test
-    void getAll_Track_fromAlbumList() throws JSONException, IOException {
-        OkHttpClient client = new OkHttpClient();
-        List<Album> albumList = albumService.findAll();
-        for(Album  album : albumList) {
-            Request request = new Request.Builder()
-                    .url(album.getTracklist())
-                    .get()
-                    .build();
-            Response response = client.newCall(request).execute();
-            ObjectMapper objectMapper = new ObjectMapper();
-            ResponseBody responseBody = client.newCall(request).execute().body();
-            JSONObject jsonObject = new JSONObject(responseBody.string());
-            JSONArray jsonArray = jsonObject.getJSONArray("data");
-            for(int i = 0 ; i < jsonArray.length() ; i++) {
-                JSONObject _jsonObject = jsonArray.getJSONObject(i);
-                TrackDtoMap trackDtoMap = objectMapper.readValue(_jsonObject.toString() , TrackDtoMap.class);
-                ArtistDtoMap artistDtoMap = objectMapper.convertValue(trackDtoMap.getArtist(), ArtistDtoMap.class);
-                Track track = new Track();
-                BeanUtils.copyProperties(trackDtoMap, track);
-                Artist artist = new Artist();
-                BeanUtils.copyProperties(artistDtoMap , artist);
-                track.setAlbum(album);
-                track.setArtist(artist);
-                trackService.save(track);
-                System.out.println(track);
+            if(artist.getPicture() == null) {
+                Request request = new Request.Builder()
+                        .url("https://deezerdevs-deezer.p.rapidapi.com/artist/"+artist.getId())
+                        .get()
+                        .addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
+                        .addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
+                        .build();
+                Response response = client.newCall(request).execute();
+                ObjectMapper objectMapper = new ObjectMapper();
+                ResponseBody responseBody = client.newCall(request).execute().body();
+                JSONObject jsonObject = new JSONObject(responseBody.string());
+                System.out.println(jsonObject.toString());
+                if (!jsonObject.toString().contains("\"error\"")) {
+                    ArtistDtoMap artistDtoMap = objectMapper.readValue(jsonObject.toString() , ArtistDtoMap.class);
+                    BeanUtils.copyProperties(artistDtoMap, artist);
+                    artistService.save(artist);
+                } else i--;
             }
         }
     }

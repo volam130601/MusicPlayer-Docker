@@ -85,7 +85,7 @@ PlaylistController implements PlaylistControllerImpl {
     //Error Fix
     @Override
     @PutMapping("/rename")
-    public ResponseEntity<ResponseObject> renamePlaylist(@ModelAttribute PlaylistDto playlistDto) {
+    public ResponseEntity<ResponseObject> renamePlaylist(@RequestBody PlaylistDto playlistDto) {
         Optional<Playlist> exists = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
         if(exists.isPresent()) {
             Optional<User> user = userService.findByUsername(playlistDto.getUsername());
