@@ -85,23 +85,23 @@ PlaylistController implements PlaylistControllerImpl {
     //Error Fix
     @Override
     @PutMapping("/rename")
-    public ResponseEntity<ResponseObject> renamePlaylist(@ModelAttribute PlaylistDto playlistDto) {
+    public ResponseEntity<ResponseObject> renamePlaylist(@RequestBody PlaylistDto playlistDto) {
+        System.out.println(playlistDto);
         Optional<Playlist> exists = playlistService.findByNameAndUserUsername(playlistDto.getName() , playlistDto.getUsername());
         if(exists.isPresent()) {
             Optional<User> user = userService.findByUsername(playlistDto.getUsername());
-            if(user.isPresent()) {
-                Playlist playlist = Playlist.builder()
-                        .id(exists.get().getId())
-                        .name(playlistDto.getRename())
-                        .user(user.get())
-                        .build();
-                playlistService.save(playlist);
-                return ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject("OK", "Rename Playlist Successfully!", playlist)
-                );
-            }
+            System.out.println(user);
+            Playlist playlist = Playlist.builder()
+                    .id(exists.get().getId())
+                    .name(playlistDto.getRename())
+                    .user(user.get())
+                    .build();
+            playlistService.save(playlist);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("OK", "Rename Playlist Successfully!", playlist)
+            );
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("FAILED" , "Cannot found name or username!", "")
         );
     }

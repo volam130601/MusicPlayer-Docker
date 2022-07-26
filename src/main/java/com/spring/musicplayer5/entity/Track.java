@@ -25,12 +25,12 @@ public class Track {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "artist_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Artist artist;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "album_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Album album;
 
     @OneToMany(mappedBy = "track")

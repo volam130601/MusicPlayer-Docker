@@ -40,7 +40,7 @@ public class TrackController implements TrackControllerImpl {
         }
         if(!trackDtos.isEmpty()) {
             return ResponseEntity.ok(
-                    new ResponseObject("OK", "Get Data Track Successfully!" ,trackDtos)
+                    new ResponseObject("OK", "Get Data Track Successfully!" ,tracks)
             );
         }
         return ResponseEntity.ok(
@@ -117,7 +117,7 @@ public class TrackController implements TrackControllerImpl {
         });
         if(!trackDtos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Get Top "+size+" list of Tracks Successfully!" , trackDtos)
+                    new ResponseObject("OK", "Get Top "+size+" list of Tracks Successfully!" , tracks)
             );
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

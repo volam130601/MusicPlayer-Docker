@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface PlaylistRepository extends JpaRepository<Playlist , Long> {
     Optional<Playlist> findByName(String name);
 
-    @Query(value = "select pl from Playlist pl where pl.name = ?1 and pl.user.username = ?2 ")
+    @Query(value = "SELECT * FROM dbmusic_temp.playlist where name = ?1 and username = ?2", nativeQuery = true)
     Optional<Playlist> findByNameAndUserUsername(String name , String username);
 
     @Query(value = "select * from playlist where username = ?1", nativeQuery = true)
