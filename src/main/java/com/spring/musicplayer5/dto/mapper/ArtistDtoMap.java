@@ -14,8 +14,10 @@ public class ArtistDtoMap {
     private String picture_medium;
     private String picture_big;
     private String picture_xl;
+    private Integer nb_album;
+    private Integer nb_fan;
     private String share;
-    private String type;
     private String tracklist;
-    private boolean radio;
+    private String radio;
+    private String type;
 }

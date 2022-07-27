@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -18,19 +19,17 @@ public class Track {
     private String link;
     private Integer duration;
     private String preview;
-    private String image;
+    private String release_date;
 
     @Column(name = "ranks")
     private Integer rank;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "artist_id")
-    @JsonIgnore
     private Artist artist;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "album_id")
-    @JsonIgnore
     private Album album;
 
     @OneToMany(mappedBy = "track")
@@ -52,4 +51,16 @@ public class Track {
 //            inverseJoinColumns = @JoinColumn(name = "playlist_id")
 //    )
 //    private List<Playlist> playlists;
+
+//    @OneToMany(mappedBy = "track")
+//    @JsonIgnore
+//    private Collection<TrackPlaylist> trackPlaylist;
+//
+//    public Collection<TrackPlaylist> getTrackPlaylist() {
+//        return trackPlaylist;
+//    }
+//
+//    public void setTrackPlaylist(Collection<TrackPlaylist> trackPlaylist) {
+//        this.trackPlaylist = trackPlaylist;
+//    }
 }

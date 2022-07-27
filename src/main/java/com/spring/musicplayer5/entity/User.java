@@ -26,7 +26,6 @@ public class User {
     @JoinColumn(name = "role_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @JsonIgnore
     private Role role;
 
     @OneToMany(mappedBy = "user")
