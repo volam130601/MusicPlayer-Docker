@@ -1,7 +1,6 @@
 package com.spring.musicplayer5.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.musicplayer5.dto.TrackDto;
 import com.spring.musicplayer5.dto.mapper.AlbumDtoMap;
 import com.spring.musicplayer5.dto.mapper.ArtistDtoMap;
 import com.spring.musicplayer5.dto.mapper.GenreDtoMap;
@@ -10,14 +9,10 @@ import com.spring.musicplayer5.entity.Album;
 import com.spring.musicplayer5.entity.Artist;
 import com.spring.musicplayer5.entity.Genre;
 import com.spring.musicplayer5.entity.Track;
-import com.spring.musicplayer5.repositories.AlbumRepository;
-import com.spring.musicplayer5.repositories.ArtistRepository;
-import com.spring.musicplayer5.repositories.TrackRepository;
 import com.spring.musicplayer5.services.AlbumService;
 import com.spring.musicplayer5.services.ArtistService;
 import com.spring.musicplayer5.services.GenreService;
 import com.spring.musicplayer5.services.TrackService;
-import com.spring.musicplayer5.utils.ListID;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 
 import java.io.IOException;
 import java.util.*;

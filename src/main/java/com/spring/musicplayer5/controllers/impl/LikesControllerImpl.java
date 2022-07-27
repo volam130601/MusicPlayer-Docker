@@ -1,4 +1,4 @@
-package com.spring.musicplayer5.controllers;
+package com.spring.musicplayer5.controllers.impl;
 
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.entity.Likes;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/likes")
-public class LikesController {
+public class LikesControllerImpl {
     @Autowired
     private LikesService likesService;
     @GetMapping("/count_likes_of_tracks")
