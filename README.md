@@ -15,10 +15,8 @@ docker-compose -f docker-compose.prod.yml up -d
 ```
 2.You must copy export data in dump_test.sql then you paste into mysql:8.0 container
 ```bash
-    docker exec -ti mysql-musicplayer-docker mysql -u root -p
-    #password:870124zxc (in file docker-compose)
-    use dbmusic;
-    #Then paste dump_test.sql 
+docker exec -ti mysql-musicplayer-docker mysql -u root -p
+#password:870124zxc (in file docker-compose)
 ```
 ## Usage
 
