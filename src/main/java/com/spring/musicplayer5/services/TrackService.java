@@ -15,10 +15,7 @@ public interface TrackService {
     Optional<Track> findById(long id);
     void deleteById(long id);
     Page<Track> findAll(Pageable pageable);
-    List<Track> findByTitle(String title);
-
-    List<Track> findByAlbum_Id(long id);
+    Page<Track> findByTitle(String title, Pageable pageable);
+    Page<Track> findByAlbum_Id(long id, Pageable pageable);
     List<Track> findByTop(Pageable pageable);
-
-
 }
