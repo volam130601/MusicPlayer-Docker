@@ -281,21 +281,23 @@ public class PushDataIntoDatabase {
         OkHttpClient client = new OkHttpClient();
         for (int i = 0 ; i < trackList.size() ; i++){
             Track track = trackList.get(i);
-            Request request = new Request.Builder()
-                    	.url("https://deezerdevs-deezer.p.rapidapi.com/track/"+track.getId())
-                    	.get()
-                    	.addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
-                    	.addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
-                    	.build();
-            Response response = client.newCall(request).execute();
-            ObjectMapper objectMapper = new ObjectMapper();
-            ResponseBody responseBody = client.newCall(request).execute().body();
-            JSONObject jsonObject = new JSONObject(responseBody.string());
-            if (!jsonObject.toString().contains("\"error\"")) {
-                TrackDtoMap trackDtoMap = objectMapper.readValue(jsonObject.toString() , TrackDtoMap.class);
-                BeanUtils.copyProperties(trackDtoMap, track);
-                trackService.save(track);
-            } else i--;
+            if(track.getRelease_date() == null) {
+                Request request = new Request.Builder()
+                        .url("https://deezerdevs-deezer.p.rapidapi.com/track/"+track.getId())
+                        .get()
+                        .addHeader("X-RapidAPI-Key", "ebbbd71ef7msh69bfbff4e1b5c89p166207jsn760712159459")
+                        .addHeader("X-RapidAPI-Host", "deezerdevs-deezer.p.rapidapi.com")
+                        .build();
+                Response response = client.newCall(request).execute();
+                ObjectMapper objectMapper = new ObjectMapper();
+                ResponseBody responseBody = client.newCall(request).execute().body();
+                JSONObject jsonObject = new JSONObject(responseBody.string());
+                if (!jsonObject.toString().contains("\"error\"")) {
+                    TrackDtoMap trackDtoMap = objectMapper.readValue(jsonObject.toString() , TrackDtoMap.class);
+                    BeanUtils.copyProperties(trackDtoMap, track);
+                    trackService.save(track);
+                } else i--;
+            }
         }
     }
 
