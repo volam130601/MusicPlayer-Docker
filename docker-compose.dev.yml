@@ -1,34 +1,22 @@
+# Run command: docker-compose -f docker-compose.dev.yml up -d
+# Stop command: docker-compose -f docker-compose.dev.yml stop
+# Destroy command: docker-compose -f docker-compose.dev.yml down -v
 version: '3.8'
-#containers => services
 services:
-  mysql-musicplayer5-container:
-    image: mysql:8.0.29
-    container_name: mysql-musicplayer5-container
+  mysql-musicplayer-docker:
+    image: mysql:8.0
+    container_name: mysql-musicplayer-docker
     ports:
-      - 3310:3306    
+      - "3306:3306"
     volumes:
-      - mysql-springboot-data:/var/lib/mysql
-      - mysql-springboot-config-deamond:/etc/mysql/conf.d
-    networks:
-      - backend
+      - mysql-docker-data:/var/lib/mysql
+      - mysql-docker-config-deamond:/etc/mysql/conf.d
     environment:
       MYSQL_USER: lam
       MYSQL_PASSWORD: 870124zxc
       MYSQL_ROOT_PASSWORD: 870124zxc
       MYSQL_DATABASE: dbmusic
-  musicplayer5-docker-container:
-    image: levidocker123/musicplayer5-docker:latest
-    container_name: musicplayer5-docker-container
-    ports:
-      - 8085:8080
-    volumes:
-      - ./:/app
-    networks:
-      - backend
-#create network     
-networks:
-  backend:
-    name: musicplayer-app-network
+    restart: unless-stopped
 volumes:
-  mysql-springboot-data:
-  mysql-springboot-config-deamond:
+  mysql-docker-data:
+  mysql-docker-config-deamond:
