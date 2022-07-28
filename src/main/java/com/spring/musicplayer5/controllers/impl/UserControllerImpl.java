@@ -60,9 +60,8 @@ public class UserControllerImpl implements UserController {
             }
             Role role = Role.builder().id(1).build();
             newUser.setRole(role);
-            userService.save(newUser);
             return ResponseEntity.ok(
-                    new ResponseObject("OK", "Register Account is Success!" , newUser)
+                    new ResponseObject("OK", "Register Account is Success!" , userService.save(newUser))
             );
         }
         return ResponseEntity.ok(
