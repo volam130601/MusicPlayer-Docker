@@ -18,11 +18,10 @@ public interface TrackRepository extends JpaRepository<Track, Long> {
     @Query("SELECT t FROM Track t ORDER BY t.release_date DESC")
     Page<Track> findAll(Pageable pageable);
 
-    @Modifying
-    @Query("SELECT t FROM Track t WHERE t.title like ?1%")
-    List<Track> findByTitle(String title);
+    @Query("SELECT t FROM Track t WHERE t.title like ?1% order by t.title asc")
+    Page<Track> findByTitle(String title , Pageable pageable);
 
-    List<Track> findByAlbum_Id(long id);
+    Page<Track> findByAlbum_Id(long id, Pageable pageable);
 
     @Query("SELECT t FROM Track t ORDER BY t.rank DESC")
     List<Track> findByTop(Pageable pageable);

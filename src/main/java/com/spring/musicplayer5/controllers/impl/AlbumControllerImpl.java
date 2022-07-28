@@ -31,15 +31,12 @@ public class AlbumControllerImpl implements AlbumController {
     @Override
     @GetMapping("/get_track")
     public ResponseEntity<ResponseObject> getTracksBelongIdAlbum(@RequestParam long albumId) {
-        List<Track> tracks = trackService.findByAlbum_Id(albumId);
         Optional<Album> album = albumService.findById(albumId);
-        if(!tracks.isEmpty() && album.isPresent()) {
-            AlbumOfTrackDto albumOfTrackDto = AlbumOfTrackDto.builder()
-                    .album(album.get())
-                    .tracks(tracks)
-                    .build();
+        if(album.isPresent()) {
+            Page<Track> tracks = trackService.findByAlbum_Id(albumId, PageRequest.of(0 , 20));
+            System.out.println(tracks.toList());
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Get Track have Album_id Successfully!" , tracks , tracks.size())
+                    new ResponseObject("OK", "Get Track have Album_id Successfully!" , tracks.toList() , tracks.getSize())
             );
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -50,7 +47,7 @@ public class AlbumControllerImpl implements AlbumController {
     @Override
     @GetMapping
     public ResponseEntity<ResponseObject> getTop5() {
-        Page<Album> albums = albumService.findAll(PageRequest.of(0 , 5 ));
+        Page<Album> albums = albumService.findAll(PageRequest.of(0 , 5));
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK", "Get Track have Album_id Successfully!" , albums.toList(), albums.getSize())
         );
