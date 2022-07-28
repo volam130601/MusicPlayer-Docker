@@ -3,9 +3,9 @@
 # Destroy command: docker-compose -f docker-compose.dev.yml down -v
 version: '3.8'
 services:
-  mysql-musicplayer-docker:
+  mysql-docker:
     image: mysql:8.0
-    container_name: mysql-musicplayer-docker
+    container_name: mysql-docker
     ports:
       - "3306:3306"
     volumes:
