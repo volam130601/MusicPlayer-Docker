@@ -3,11 +3,11 @@
 # Destroy command: docker-compose -f docker-compose.prod.yml down -v
 version: '3.8'
 services:
-  mysql-musicplayer-docker:
+  mysql-docker:
     image: mysql:8.0
-    container_name: mysql-musicplayer-docker
+    container_name: mysql-docker
     ports:
-      - "3306:3306"
+      - 3306:3306
     volumes:
       - mysql-docker-data:/var/lib/mysql
       - mysql-docker-config-deamond:/etc/mysql/conf.d
@@ -18,6 +18,7 @@ services:
       MYSQL_PASSWORD: 870124zxc
       MYSQL_ROOT_PASSWORD: 870124zxc
       MYSQL_DATABASE: dbmusic
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
     restart: unless-stopped
   music_player_docker:
     image: levidocker123/music_player_docker:latest
@@ -26,7 +27,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
     volumes:
       - musicplayer-data:/tmp
     networks:

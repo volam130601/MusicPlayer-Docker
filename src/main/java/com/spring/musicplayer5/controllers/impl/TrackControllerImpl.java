@@ -7,6 +7,7 @@ import com.spring.musicplayer5.services.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,10 +50,10 @@ public class TrackControllerImpl implements TrackController {
     @Override
     @GetMapping("/search")
     public ResponseEntity<ResponseObject> getByTitle(@RequestParam String title) {
-        List<Track> tracks = trackService.findByTitle(title);
+        Page<Track> tracks = trackService.findByTitle(title , PageRequest.of(0 , 5));
         if(!tracks.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Search Track Successfully!" , tracks)
+                    new ResponseObject("OK", "Search Track Successfully!" , tracks.toList(), tracks.getSize())
             );
         }
         return ResponseEntity.status(HttpStatus.OK).body(

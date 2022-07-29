@@ -45,13 +45,13 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public List<Track> findByTitle(String title) {
-        return trackRepository.findByTitle(title);
+    public Page<Track> findByTitle(String title ,Pageable pageable) {
+        return trackRepository.findByTitle(title, pageable);
     }
 
     @Override
-    public List<Track> findByAlbum_Id(long id) {
-        return trackRepository.findByAlbum_Id(id);
+    public Page<Track> findByAlbum_Id(long id, Pageable pageable) {
+        return trackRepository.findByAlbum_Id(id, pageable);
     }
 
     @Override
