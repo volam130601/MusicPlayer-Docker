@@ -30,9 +30,13 @@ services:
       - 8080:8080
     volumes:
       - musicplayer-data:/tmp
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker:3306/dbmusic
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 870124zxc
     networks:
       - backend
-    restart: unless-stopped
+    restart: always
 #create network
 networks:
   backend:
