@@ -23,6 +23,7 @@ public interface TrackRepository extends JpaRepository<Track, Long> {
 
     Page<Track> findByAlbum_Id(long id, Pageable pageable);
 
+    Page<Track> findByArtistId(long artistId , Pageable pageable);
     @Query("SELECT t FROM Track t ORDER BY t.rank DESC")
     List<Track> findByTop(Pageable pageable);
 ;}
