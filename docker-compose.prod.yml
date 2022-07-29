@@ -27,16 +27,12 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080" #<local-port>:<container-port>
+      - 8080:8080
     volumes:
       - musicplayer-data:/tmp
     networks:
       - backend
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker:3306/dbmusic
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 870124zxc
-    restart: always
+    restart: unless-stopped
 #create network
 networks:
   backend:
