@@ -59,4 +59,9 @@ public class TrackServiceImpl implements TrackService {
         return trackRepository.findByTop(pageable);
     }
 
+
+    @Override
+    public Page<Track> findByArtistId(long artistId, Pageable pageable) {
+        return trackRepository.findByArtistId(artistId , pageable);
+    }
 }

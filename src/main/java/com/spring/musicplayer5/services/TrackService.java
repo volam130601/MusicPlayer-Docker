@@ -18,4 +18,7 @@ public interface TrackService {
     Page<Track> findByTitle(String title, Pageable pageable);
     Page<Track> findByAlbum_Id(long id, Pageable pageable);
     List<Track> findByTop(Pageable pageable);
+
+    Page<Track> findByArtistId(long artistId , Pageable pageable);
+
 }
