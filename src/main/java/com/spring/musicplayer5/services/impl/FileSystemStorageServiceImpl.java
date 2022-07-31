@@ -1,6 +1,5 @@
 package com.spring.musicplayer5.services.impl;
 
-import com.spring.musicplayer5.config.StorageProperties;
 import com.spring.musicplayer5.exceptions.StorageException;
 import com.spring.musicplayer5.exceptions.StorageFileNotFoundException;
 import com.spring.musicplayer5.services.StorageService;
@@ -19,16 +18,12 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class FileSystemStorageServiceImpl implements StorageService {
-    private final Path rootLocation;
+    private final Path rootLocation = Path.of(System.getProperty("user.dir") + "/images/");
 
     @Override
     public String getStoredFilename(MultipartFile file, String id) {
         String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-        return "p" + id + "." + ext;
-    }
-
-    public FileSystemStorageServiceImpl(StorageProperties properties) {
-        this.rootLocation = Paths.get(properties.getLocation());
+        return id + "." + ext;
     }
 
     @Override
@@ -76,7 +71,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public void delete(String storedFilename) throws IOException {
         Path destinationFile = rootLocation.resolve(Paths.get(storedFilename))
                 .normalize().toAbsolutePath();
-        Files.delete(destinationFile);
+        Files.deleteIfExists(destinationFile);
     }
 
     @Override

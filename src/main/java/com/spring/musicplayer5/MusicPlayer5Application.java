@@ -1,15 +1,12 @@
 package com.spring.musicplayer5;
 
-import com.spring.musicplayer5.config.StorageProperties;
 import com.spring.musicplayer5.services.StorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@EnableConfigurationProperties(StorageProperties.class) //Add config storage vao he thong
 public class MusicPlayer5Application {
 
     public static void main(String[] args) {

@@ -7,22 +7,30 @@ import com.spring.musicplayer5.dto.login.LoginRequestDto;
 import com.spring.musicplayer5.entity.Role;
 import com.spring.musicplayer5.entity.User;
 import com.spring.musicplayer5.services.*;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserControllerImpl implements UserController {
-
     @Autowired
     private UserService userService;
     @Autowired
@@ -146,36 +154,25 @@ public class UserControllerImpl implements UserController {
         );
     }
 
+    //File Uploads
     @Autowired
     private StorageService storageService;
 
-    @PostMapping("/files/upload")
-    public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute UserDto userDto) throws IOException {
-        Optional<User> exsistUser = userService.findByUsername(userDto.getUsername());
-        System.out.println("<><>"+userDto);
-        if(!userDto.getImageFile().isEmpty() && exsistUser.isPresent()) {
+    @RequestMapping(value = "/image", produces = {MediaType.IMAGE_PNG_VALUE, "application/json"})
+    public ResponseEntity<?> uploadImage(@RequestParam("imageFile")MultipartFile file,
+                                         @RequestParam("username") String username) throws IOException {
+        Optional<User> exsistUser = userService.findByUsername(username);
+        if(exsistUser.isPresent()) {
             UUID uuid = UUID.randomUUID();
-            String uuString = uuid.toString();
+            String name = uuid.toString();
             User user = exsistUser.get();
-            storageService.delete(user.getImage() != null ? user.getImage() : "null");
-            user.setImage(storageService.getStoredFilename(userDto.getImageFile(), uuString));
-            storageService.store(userDto.getImageFile() , user.getImage());
+            storageService.delete(user.getImage());
+            user.setImage(storageService.getStoredFilename(file, name));
+            storageService.store(file, user.getImage());
             userService.save(user);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK" , "Save image of User is successfully!" , user)
-            );
+            return new ResponseEntity<>("Uploaded success!" , HttpStatus.CREATED);
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
-                new ResponseObject("FAILED" , "Cannot saved image!")
-        );
-    }
-
-    @PostMapping("/files/upload/test")
-    public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute MultipartFile imageFile) throws IOException {
-        System.out.println(imageFile);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK" , "Save image of User is successfully!" , "user")
-        );
+        return  new ResponseEntity<>("Cannot found username!" , HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/images/{filename:.+}")
@@ -196,7 +193,6 @@ public class UserControllerImpl implements UserController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                     .contentType(MediaType.IMAGE_JPEG).body(file);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(null);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
