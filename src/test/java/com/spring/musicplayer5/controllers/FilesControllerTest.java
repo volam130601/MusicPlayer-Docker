@@ -1,14 +1,23 @@
 package com.spring.musicplayer5.controllers;
 
+import com.spring.musicplayer5.services.StorageService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SpringBootTest
 class FilesControllerTest {
@@ -49,12 +58,29 @@ class FilesControllerTest {
         System.out.println(temp.substring(0,temp.length() - 6));
         System.out.println(temp.replace("localhost",  "172.16.75.26"));
     }
+
+    private static String imageDirectory = System.getProperty("user.dir") + "/images/";
+    @Autowired
+    private StorageService storageService;
     @Test
-    public void getIpAddress() {
-        try {
-            System.out.println("IP Address : " + Inet4Address.getLocalHost().getHostAddress());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void testDirectory() throws IOException {
+        String image = "617102bb-9103-4c93-82b6-fc5c689618c5.png";
+        String dir = imageDirectory + image;
+        Path file = Paths.get(dir);
+        System.out.println(Files.deleteIfExists(file));
+//        Set<String> listFile = listFilesUsingJavaIO(imageDirectory);
+//        for(String s : listFile) {
+//            System.out.println(s);
+//            if(s.equals(image)) {
+//
+//                return;
+//        }
+    }
+
+    public Set<String> listFilesUsingJavaIO(String dir) {
+        return Stream.of(new File(dir).listFiles())
+                .filter(file -> !file.isDirectory())
+                .map(File::getName)
+                .collect(Collectors.toSet());
     }
 }
