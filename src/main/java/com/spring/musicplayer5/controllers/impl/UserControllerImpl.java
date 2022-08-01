@@ -7,26 +7,15 @@ import com.spring.musicplayer5.dto.login.LoginRequestDto;
 import com.spring.musicplayer5.entity.Role;
 import com.spring.musicplayer5.entity.User;
 import com.spring.musicplayer5.services.*;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/user")
@@ -158,8 +147,9 @@ public class UserControllerImpl implements UserController {
     @Autowired
     private StorageService storageService;
 
+    @Override
     @RequestMapping(value = "/image", produces = {MediaType.IMAGE_PNG_VALUE, "application/json"})
-    public ResponseEntity<?> uploadImage(@RequestParam("imageFile")MultipartFile file,
+    public ResponseEntity<?> uploadImage(@RequestParam("imageFile") MultipartFile file,
                                          @RequestParam("username") String username) throws IOException {
         Optional<User> exsistUser = userService.findByUsername(username);
         if(exsistUser.isPresent()) {
@@ -176,24 +166,30 @@ public class UserControllerImpl implements UserController {
 
     }
 
+    @Override
     @GetMapping("/images/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        Resource file = storageService.loadAsResource(filename);
+        Resource file = storageService.loadAsResource("image_default.png");;
+        if(storageService.findFile(filename)) {
+            file = storageService.loadAsResource(filename);
+        }
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .contentType(MediaType.IMAGE_JPEG).body(file);
     }
 
+    @Override
     @GetMapping("/files/get_image")
     public ResponseEntity<Resource> getImageByUser(@RequestParam String username) {
         Optional<User> exist = userService.findByUsername(username);
-        if(exist.isPresent()) {
-            Resource file = storageService.loadAsResource(exist.get().getImage());
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
-                    .contentType(MediaType.IMAGE_JPEG).body(file);
+        Resource file = storageService.loadAsResource("image_default.jpg");;
+        if(exist.isPresent() && storageService.findFile(exist.get().getImage())) {
+            file = storageService.loadAsResource(exist.get().getImage());
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .contentType(MediaType.IMAGE_JPEG).body(file);
     }
+
 }

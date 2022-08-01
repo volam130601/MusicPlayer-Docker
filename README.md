@@ -2,22 +2,39 @@
 
 - [What is a multi-stage build?](https://vsupalov.com/docker-multi-stage-advantages/)
 - [Official documentation](https://spring.io/guides/topicals/spring-boot-docker/)
+## How to use docker in spring boot (back-end):
 
+1.You write line this in terminal
+   
+- Run command
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+- Stop command
+```bash
+docker-compose -f docker-compose.prod.yml stop
+```
+- Destroy command
+```bash
+docker-compose -f docker-compose.prod.yml down -v
+```
+2.You must copy export data in file xxx.sql then you paste into mysql:8.0 container
+```bash
+docker exec -ti mysql-musicplayer-docker mysql -u root -p
+#password:870124zxc (in file docker-compose)
+```
+## Build tag
 _Note: To reduce build time please enable DOCKER_BUILDKIT=1_
 
 ```bash
 export DOCKER_BUILDKIT=1 # enable Docker buildkit (for Linux)
 ```
-## How to use docker in spring boot (back-end):
-1.You write line this in terminal
+1.You must export Docker buildkit
 ```bash
-docker-compose -f docker-compose.prod.yml up -d
+docker build -t levidocker123/music_player_docker:latest .
 ```
-2.You must copy export data in dump_test.sql then you paste into mysql:8.0 container
-```bash
-docker exec -ti mysql-musicplayer-docker mysql -u root -p
-#password:870124zxc (in file docker-compose)
-```
+
 ## Usage
 
 ### Using docker compose

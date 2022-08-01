@@ -73,16 +73,21 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void delete(String storedFilename) throws IOException {
+        if(findFile(storedFilename)) {
+            Path destinationFile = rootLocation.resolve(Paths.get(storedFilename))
+                    .normalize().toAbsolutePath();
+            Files.deleteIfExists(destinationFile);
+        }
+    }
+    @Override
+    public boolean findFile(String storedFilename) {
         Set<String> listFile = listFilesUsingJavaIO(rootLocation.toString());
         for(String s : listFile) {
-            System.out.println(s);
             if(s.equals(storedFilename)) {
-                Path destinationFile = rootLocation.resolve(Paths.get(storedFilename))
-                        .normalize().toAbsolutePath();
-                Files.deleteIfExists(destinationFile);
-                break;
+                return true;
             }
         }
+        return false;
     }
     public Set<String> listFilesUsingJavaIO(String dir) {
         return Stream.of(new File(dir).listFiles())
@@ -90,6 +95,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
                 .map(File::getName)
                 .collect(Collectors.toSet());
     }
+
     @Override
     public void init() {
         try {

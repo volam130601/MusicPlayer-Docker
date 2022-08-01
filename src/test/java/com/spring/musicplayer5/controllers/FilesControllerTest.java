@@ -64,10 +64,11 @@ class FilesControllerTest {
     private StorageService storageService;
     @Test
     public void testDirectory() throws IOException {
-        String image = "617102bb-9103-4c93-82b6-fc5c689618c5.png";
-        String dir = imageDirectory + image;
-        Path file = Paths.get(dir);
-        System.out.println(Files.deleteIfExists(file));
+        System.out.println(imageDirectory);
+//        String image = "617102bb-9103-4c93-82b6-fc5c689618c5.png";
+//        String dir = imageDirectory + image;
+//        Path file = Paths.get(dir);
+//        System.out.println(Files.deleteIfExists(file));
 //        Set<String> listFile = listFilesUsingJavaIO(imageDirectory);
 //        for(String s : listFile) {
 //            System.out.println(s);
