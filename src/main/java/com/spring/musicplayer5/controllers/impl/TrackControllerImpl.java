@@ -30,7 +30,7 @@ public class TrackControllerImpl implements TrackController {
     public ResponseEntity<ResponseObject> findAll() {
         Page<Track> tracks = trackService.findAll(PageRequest.of(0, 100));
         return ResponseEntity.ok(
-                new ResponseObject("OK", "Get Data Track Successfully!" ,tracks.toList())
+                new ResponseObject("OK", "Get Data Track Successfully!" ,tracks.toList(),  tracks.toList().size())
         );
     }
     //Repair

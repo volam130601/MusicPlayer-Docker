@@ -20,6 +20,10 @@ RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM openjdk:11-jre-buster
 VOLUME /tmp
+
+ADD images /images
+VOLUME /images
+
 EXPOSE 8080
 ARG DEPENDENCY=/workspace/app/target/dependency
 COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib /app/lib

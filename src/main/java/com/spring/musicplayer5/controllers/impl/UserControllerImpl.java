@@ -15,14 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserControllerImpl implements UserController {
-
     @Autowired
     private UserService userService;
     @Autowired
@@ -146,57 +143,53 @@ public class UserControllerImpl implements UserController {
         );
     }
 
+    //File Uploads
     @Autowired
     private StorageService storageService;
 
-    @PostMapping("/files/upload")
-    public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute UserDto userDto) throws IOException {
-        Optional<User> exsistUser = userService.findByUsername(userDto.getUsername());
-        System.out.println("<><>"+userDto);
-        if(!userDto.getImageFile().isEmpty() && exsistUser.isPresent()) {
+    @Override
+    @RequestMapping(value = "/image", produces = {MediaType.IMAGE_PNG_VALUE, "application/json"})
+    public ResponseEntity<?> uploadImage(@RequestParam("imageFile") MultipartFile file,
+                                         @RequestParam("username") String username) throws IOException {
+        Optional<User> exsistUser = userService.findByUsername(username);
+        if(exsistUser.isPresent()) {
             UUID uuid = UUID.randomUUID();
-            String uuString = uuid.toString();
+            String name = uuid.toString();
             User user = exsistUser.get();
-            storageService.delete(user.getImage() != null ? user.getImage() : "null");
-            user.setImage(storageService.getStoredFilename(userDto.getImageFile(), uuString));
-            storageService.store(userDto.getImageFile() , user.getImage());
+            storageService.delete(user.getImage());
+            user.setImage(storageService.getStoredFilename(file, name));
+            storageService.store(file, user.getImage());
             userService.save(user);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK" , "Save image of User is successfully!" , user)
-            );
+            return new ResponseEntity<>("Upload success", HttpStatus.CREATED);
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
-                new ResponseObject("FAILED" , "Cannot saved image!")
-        );
+        return new ResponseEntity<>("Cannot found User!", HttpStatus.BAD_REQUEST);
+
     }
 
-    @PostMapping("/files/upload/test")
-    public ResponseEntity<ResponseObject> uploadFile(@ModelAttribute MultipartFile imageFile) throws IOException {
-        System.out.println(imageFile);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK" , "Save image of User is successfully!" , "user")
-        );
-    }
-
+    @Override
     @GetMapping("/images/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        Resource file = storageService.loadAsResource(filename);
+        Resource file = storageService.loadAsResource("image_default.png");;
+        if(storageService.findFile(filename)) {
+            file = storageService.loadAsResource(filename);
+        }
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .contentType(MediaType.IMAGE_JPEG).body(file);
     }
 
+    @Override
     @GetMapping("/files/get_image")
     public ResponseEntity<Resource> getImageByUser(@RequestParam String username) {
         Optional<User> exist = userService.findByUsername(username);
-        if(exist.isPresent()) {
-            Resource file = storageService.loadAsResource(exist.get().getImage());
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
-                    .contentType(MediaType.IMAGE_JPEG).body(file);
+        Resource file = storageService.loadAsResource("image_default.png");;
+        if(exist.isPresent() && storageService.findFile(exist.get().getImage())) {
+            file = storageService.loadAsResource(exist.get().getImage());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(null);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .contentType(MediaType.IMAGE_JPEG).body(file);
     }
+
 }

@@ -1,6 +1,5 @@
 package com.spring.musicplayer5.services.impl;
 
-import com.spring.musicplayer5.config.StorageProperties;
 import com.spring.musicplayer5.exceptions.StorageException;
 import com.spring.musicplayer5.exceptions.StorageFileNotFoundException;
 import com.spring.musicplayer5.services.StorageService;
@@ -10,25 +9,25 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class FileSystemStorageServiceImpl implements StorageService {
-    private final Path rootLocation;
+    private final Path rootLocation = Path.of(System.getProperty("user.dir") + "/images/");
 
     @Override
     public String getStoredFilename(MultipartFile file, String id) {
         String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-        return "p" + id + "." + ext;
-    }
-
-    public FileSystemStorageServiceImpl(StorageProperties properties) {
-        this.rootLocation = Paths.get(properties.getLocation());
+        return id + "." + ext;
     }
 
     @Override
@@ -74,9 +73,27 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void delete(String storedFilename) throws IOException {
-        Path destinationFile = rootLocation.resolve(Paths.get(storedFilename))
-                .normalize().toAbsolutePath();
-        Files.delete(destinationFile);
+        if(findFile(storedFilename)) {
+            Path destinationFile = rootLocation.resolve(Paths.get(storedFilename))
+                    .normalize().toAbsolutePath();
+            Files.deleteIfExists(destinationFile);
+        }
+    }
+    @Override
+    public boolean findFile(String storedFilename) {
+        Set<String> listFile = listFilesUsingJavaIO(rootLocation.toString());
+        for(String s : listFile) {
+            if(s.equals(storedFilename)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public Set<String> listFilesUsingJavaIO(String dir) {
+        return Stream.of(new File(dir).listFiles())
+                .filter(file -> !file.isDirectory())
+                .map(File::getName)
+                .collect(Collectors.toSet());
     }
 
     @Override

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface StorageService {
+    boolean findFile(String storedFilename);
+
     void init();
 
     void delete(String storedFilename) throws IOException;
