@@ -9,12 +9,16 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class FileSystemStorageServiceImpl implements StorageService {
@@ -69,11 +73,23 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void delete(String storedFilename) throws IOException {
-        Path destinationFile = rootLocation.resolve(Paths.get(storedFilename))
-                .normalize().toAbsolutePath();
-        Files.deleteIfExists(destinationFile);
+        Set<String> listFile = listFilesUsingJavaIO(rootLocation.toString());
+        for(String s : listFile) {
+            System.out.println(s);
+            if(s.equals(storedFilename)) {
+                Path destinationFile = rootLocation.resolve(Paths.get(storedFilename))
+                        .normalize().toAbsolutePath();
+                Files.deleteIfExists(destinationFile);
+                break;
+            }
+        }
     }
-
+    public Set<String> listFilesUsingJavaIO(String dir) {
+        return Stream.of(new File(dir).listFiles())
+                .filter(file -> !file.isDirectory())
+                .map(File::getName)
+                .collect(Collectors.toSet());
+    }
     @Override
     public void init() {
         try {
