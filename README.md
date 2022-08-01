@@ -19,11 +19,7 @@ docker-compose -f docker-compose.prod.yml stop
 ```bash
 docker-compose -f docker-compose.prod.yml down -v
 ```
-2.You must copy export data in file xxx.sql then you paste into mysql:8.0 container
-```bash
-docker exec -ti mysql-musicplayer-docker mysql -u root -p
-#password:870124zxc (in file docker-compose)
-```
+
 ## Build tag
 _Note: To reduce build time please enable DOCKER_BUILDKIT=1_
 
@@ -33,6 +29,26 @@ export DOCKER_BUILDKIT=1 # enable Docker buildkit (for Linux)
 1.You must export Docker buildkit
 ```bash
 docker build -t levidocker123/music_player_docker:latest .
+```
+### Docker
+1.Docker push
+```bash
+docker push levidocker123/music_player_docker:latest
+```
+## MYSQL
+** Export File: You must copy export data in file xxx.sql then you paste into mysql:8.0 container
+```bash
+docker exec -ti mysql-musicplayer-docker mysql -u root -p
+#password:870124zxc (in file docker-compose)
+```
+1.USE Dump
+```bash
+docker exec mysql-docker /usr/bin/mysqldump -u root -p dbmusic > dump_dbmusic.sql
+```
+2.Add create database into file dump
+```bash
+CREATE DATABASE  IF NOT EXISTS `dbmusic` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `dbmusic`;
 ```
 
 ## Usage
