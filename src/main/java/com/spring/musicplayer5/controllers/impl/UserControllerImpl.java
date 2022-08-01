@@ -183,7 +183,7 @@ public class UserControllerImpl implements UserController {
     @GetMapping("/files/get_image")
     public ResponseEntity<Resource> getImageByUser(@RequestParam String username) {
         Optional<User> exist = userService.findByUsername(username);
-        Resource file = storageService.loadAsResource("image_default.jpg");;
+        Resource file = storageService.loadAsResource("image_default.png");;
         if(exist.isPresent() && storageService.findFile(exist.get().getImage())) {
             file = storageService.loadAsResource(exist.get().getImage());
         }
