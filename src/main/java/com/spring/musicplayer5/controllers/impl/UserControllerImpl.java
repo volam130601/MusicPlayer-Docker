@@ -170,9 +170,10 @@ public class UserControllerImpl implements UserController {
             user.setImage(storageService.getStoredFilename(file, name));
             storageService.store(file, user.getImage());
             userService.save(user);
-            return new ResponseEntity<>("Uploaded success!" , HttpStatus.CREATED);
+            return new ResponseEntity<>("Upload success", HttpStatus.CREATED);
         }
-        return  new ResponseEntity<>("Cannot found username!" , HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Cannot found User!", HttpStatus.BAD_REQUEST);
+
     }
 
     @GetMapping("/images/{filename:.+}")
