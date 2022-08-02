@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -40,7 +41,7 @@ public class CommentControllerImpl implements CommentController {
     @PostMapping
     public ResponseEntity<ResponseObject> UserCommentForTrack(@RequestBody CommentDto commentDto) {
         Optional<User> exsistUser = userService.findByUsername(commentDto.getUsername());
-        Optional<Track> exsistTrack = trackService.findById(commentDto.getTrackId());
+        Optional<Track> exsistTrack = trackService.findById(commentDto.getTrack_id());
         if(exsistUser.isPresent() && exsistTrack.isPresent()) {
             Comment comment = new Comment();
             BeanUtils.copyProperties(commentDto , comment);
@@ -60,7 +61,7 @@ public class CommentControllerImpl implements CommentController {
     @Override
     @PutMapping("/repair-content")
     public ResponseEntity<ResponseObject> repairContentByUser(@RequestBody CommentDto commentDto) {
-        Optional<Comment> exsist = commentService.findByIdAndUserUsername(commentDto.getId() , commentDto.getUsername());
+        Optional<Comment> exsist = commentService.findByIdAndUserUsername(commentDto.getComment_id() , commentDto.getUsername());
         if(exsist.isPresent()) {
             Comment comment = exsist.get();
             comment.setContent(commentDto.getContent());
@@ -76,7 +77,7 @@ public class CommentControllerImpl implements CommentController {
     @Override
     @DeleteMapping
     public ResponseEntity<ResponseObject> deleteComment(@RequestBody CommentDto commentDto) {
-        Optional<Comment> exsistComment = commentService.findByIdAndUserUsername(commentDto.getId() , commentDto.getUsername());
+        Optional<Comment> exsistComment = commentService.findByIdAndUserUsername(commentDto.getComment_id() , commentDto.getUsername());
         if(exsistComment.isPresent()) {
             commentService.deleteById(exsistComment.get().getId());
             return ResponseEntity.status(HttpStatus.OK).body(
@@ -88,5 +89,11 @@ public class CommentControllerImpl implements CommentController {
         );
     }
 
-
+    @GetMapping("/find_by_track_id")
+    public ResponseEntity<ResponseObject> findByTrackId(@RequestParam Long trackId) {
+        List<Comment> comments = commentService.findByTrackId(trackId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+            new ResponseObject("SUCCESS" , "Find is success!" , comments)
+        );
+    }
 }

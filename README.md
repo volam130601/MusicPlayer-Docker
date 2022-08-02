@@ -38,7 +38,7 @@ docker push levidocker123/music_player_docker:latest
 ## MYSQL
 ** Export File: You must copy export data in file xxx.sql then you paste into mysql:8.0 container
 ```bash
-docker exec -ti mysql-musicplayer-docker mysql -u root -p
+docker exec -ti mysql-docker mysql -u root -p
 #password:870124zxc (in file docker-compose)
 ```
 1.USE Dump
