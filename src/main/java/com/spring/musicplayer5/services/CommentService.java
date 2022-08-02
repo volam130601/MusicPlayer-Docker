@@ -12,5 +12,5 @@ public interface CommentService {
     Optional<Comment> findByIdAndUserUsername(long id , String username);
     void deleteById(long id);
     Optional<Comment> findByUserUsername(String username);
-
+    List<Comment> findByTrackId(Long trackId);
 }

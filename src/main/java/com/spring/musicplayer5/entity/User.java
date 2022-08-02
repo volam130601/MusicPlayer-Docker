@@ -45,4 +45,10 @@ public class User {
     @ToString.Exclude
     @JsonIgnore
     private List<Likes> likes;
+
+    @OneToMany(mappedBy = "user")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonIgnore
+    private List<CommentReplies> commentRepliesList;
 }

@@ -1,9 +1,11 @@
 package com.spring.musicplayer5.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor @NoArgsConstructor
@@ -28,4 +30,9 @@ public class Comment {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private User user;
+
+    @OneToMany(mappedBy = "comment")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<CommentReplies> commentRepliesList;
 }
