@@ -43,4 +43,9 @@ public class CommentServiceImpl implements CommentService {
     public Optional<Comment> findByUserUsername(String username) {
         return repository.findByUserUsername(username);
     }
+
+    @Override
+    public List<Comment> findByTrackId(Long trackId) {
+        return repository.findByTrackId(trackId);
+    }
 }
