@@ -102,7 +102,7 @@ public class CommentControllerImpl implements CommentController {
         );
     }
 
-    @PostMapping("/likes/save")
+    @PostMapping("/likes")
     public ResponseEntity<ResponseObject> saveLikeOfComment(@RequestBody CommentDto commentDto) {
         Optional<Comment> existComment = commentService.findById(commentDto.getComment_id());
         Optional<User> existUser = userService.findByUsername(commentDto.getUsername());
