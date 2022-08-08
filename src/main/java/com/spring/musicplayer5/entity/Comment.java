@@ -35,4 +35,9 @@ public class Comment {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<CommentReplies> commentRepliesList;
+
+    @OneToMany(mappedBy = "comment")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<LikesOfComment> likesOfComments;
 }
