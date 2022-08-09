@@ -13,8 +13,12 @@ public class CommentDto {
     private long track_id;
     private String username;
     private String content;
+    private Date createAt;
 
     private int likes;
     private int dislikes;
-    private Date createAt;
+
+    private Boolean isLiked = false;
+    private Boolean isDisliked = false;
+
 }

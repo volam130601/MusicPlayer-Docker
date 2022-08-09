@@ -10,15 +10,17 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@AllArgsConstructor @NoArgsConstructor @Data @Builder
-@Table(name = "comment_replies")
-public class CommentReplies {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+@Table(name = "likes_of_comment")
+public class LikesOfComment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String content;
-    private Date createAt;
-    private int likes;
-    private int dislikes;
+    private boolean isLiked;
+    private boolean isDisliked;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
@@ -28,5 +30,4 @@ public class CommentReplies {
     @ManyToOne
     @JoinColumn(name = "user_name")
     private User user;
-
 }

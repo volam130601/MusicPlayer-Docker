@@ -2,11 +2,14 @@ package com.spring.musicplayer5.controllers.impl;
 
 import com.spring.musicplayer5.controllers.CommentController;
 import com.spring.musicplayer5.dto.CommentDto;
+import com.spring.musicplayer5.dto.LikeOfCommentDto;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.entity.Comment;
+import com.spring.musicplayer5.entity.LikesOfComment;
 import com.spring.musicplayer5.entity.Track;
 import com.spring.musicplayer5.entity.User;
 import com.spring.musicplayer5.services.CommentService;
+import com.spring.musicplayer5.services.LikeOfCommentService;
 import com.spring.musicplayer5.services.TrackService;
 import com.spring.musicplayer5.services.UserService;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +32,9 @@ public class CommentControllerImpl implements CommentController {
     private UserService userService;
     @Autowired
     private TrackService trackService;
+
+    @Autowired
+    private LikeOfCommentService likeOfCommentService;
 
     @Override
     @GetMapping
@@ -94,6 +101,74 @@ public class CommentControllerImpl implements CommentController {
         List<Comment> comments = commentService.findByTrackId(trackId);
         return ResponseEntity.status(HttpStatus.OK).body(
             new ResponseObject("SUCCESS" , "Find is success!" , comments)
+        );
+    }
+
+    @PostMapping("/likes")
+    public ResponseEntity<ResponseObject> saveLikeOfComment(@RequestBody CommentDto commentDto) {
+        Optional<Comment> existComment = commentService.findById(commentDto.getComment_id());
+        Optional<User> existUser = userService.findByUsername(commentDto.getUsername());
+        if(existComment.isPresent() && existUser.isPresent()) {
+            Optional<LikesOfComment> existThis = likeOfCommentService.findByCommentIdAndUserUsername(commentDto.getComment_id(), commentDto.getUsername());
+            if(!existThis.isPresent()) {
+                LikesOfComment likes = LikesOfComment.builder()
+                        .comment(Comment.builder().id(commentDto.getComment_id()).build())
+                        .user(User.builder().username(commentDto.getUsername()).build())
+                        .build();
+                if(commentDto.getIsLiked() != null){
+                    likes.setLiked(commentDto.getIsLiked());
+                }
+                if(commentDto.getIsDisliked() != null) {
+                    likes.setDisliked(commentDto.getIsDisliked());
+                }
+                likeOfCommentService.save(likes);
+            } else {
+                if(commentDto.getIsLiked() != null && commentDto.getIsLiked() == true) {
+                    existThis.get().setLiked(true);
+                } else {
+                    existThis.get().setLiked(false);
+                }
+                if(commentDto.getIsDisliked() != null  && commentDto.getIsDisliked() == true) {
+                    existThis.get().setDisliked(true);
+                } else {
+                    existThis.get().setDisliked(false);
+                }
+                likeOfCommentService.save(existThis.get());
+            }
+            int isLiked = likeOfCommentService.countByLiked(commentDto.getComment_id());
+            int isDisliked = likeOfCommentService.countByDisliked(commentDto.getComment_id());
+            commentDto.setLikes(isLiked);
+            commentDto.setDislikes(isDisliked);
+
+            existComment.get().setLikes(isLiked);
+            existComment.get().setDislikes(isDisliked);
+            commentService.save(existComment.get());
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("SUCCESS" , "Save like is successfully!" , existComment.get())
+            );
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("NOT_FOUND" , "Cannot found comment or user!" , null)
+        );
+    }
+
+    @GetMapping("/likes")
+    public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestParam String username) {
+        List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(username);
+        if(!likesOfComments.isEmpty()) {
+            List<LikeOfCommentDto> list = new ArrayList<>();
+            likesOfComments.forEach(loc -> {
+                LikeOfCommentDto l = new LikeOfCommentDto();
+                BeanUtils.copyProperties(loc , l);
+                l.setComment_id(loc.getComment().getId());
+                l.setUsername(username);
+                list.add(l);
+            });
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("SUCCESS", "Found username is success!", list));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("NOT_FOUND" , "Cannot found username!" , null)
         );
     }
 }
