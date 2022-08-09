@@ -18,7 +18,7 @@ public class CommentDto {
     private int likes;
     private int dislikes;
 
-    private Boolean isLiked;
-    private Boolean isDisliked;
+    private Boolean isLiked = false;
+    private Boolean isDisliked = false;
 
 }

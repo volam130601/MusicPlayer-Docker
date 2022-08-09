@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -114,21 +115,23 @@ public class CommentControllerImpl implements CommentController {
                         .comment(Comment.builder().id(commentDto.getComment_id()).build())
                         .user(User.builder().username(commentDto.getUsername()).build())
                         .build();
-                if(commentDto.getIsLiked() != null) {
-                    likes.setLiked(true);
+                if(commentDto.getIsLiked() != null){
+                    likes.setLiked(commentDto.getIsLiked());
                 }
                 if(commentDto.getIsDisliked() != null) {
-                    likes.setDisliked(true);
+                    likes.setDisliked(commentDto.getIsDisliked());
                 }
                 likeOfCommentService.save(likes);
             } else {
-                if(commentDto.getIsLiked() != null) {
+                if(commentDto.getIsLiked() != null && commentDto.getIsLiked() == true) {
                     existThis.get().setLiked(true);
-                    existThis.get().setDisliked(false);
-                }
-                if(commentDto.getIsDisliked() != null) {
+                } else {
                     existThis.get().setLiked(false);
+                }
+                if(commentDto.getIsDisliked() != null  && commentDto.getIsDisliked() == true) {
                     existThis.get().setDisliked(true);
+                } else {
+                    existThis.get().setDisliked(false);
                 }
                 likeOfCommentService.save(existThis.get());
             }
@@ -150,11 +153,20 @@ public class CommentControllerImpl implements CommentController {
     }
 
     @GetMapping("/likes")
-    public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestBody CommentDto commentDto) {
-        List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(commentDto.getUsername());
-        if(!likesOfComments.isEmpty())
+    public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestBody LikeOfCommentDto likeOfCommentDto) {
+        List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(likeOfCommentDto.getUsername());
+        if(!likesOfComments.isEmpty()) {
+            List<LikeOfCommentDto> likeOfCommentDtos = new ArrayList<>();
+            for(LikesOfComment loc : likesOfComments) {
+                likeOfCommentDto.setComment_id(loc.getComment().getId());
+                likeOfCommentDto.setIsLiked(loc.isLiked());
+                likeOfCommentDto.setIsDisliked(loc.isDisliked());
+
+                likeOfCommentDtos.add(likeOfCommentDto);
+            }
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("SUCCESS", "Found username is success!", likesOfComments));
+                    .body(new ResponseObject("SUCCESS", "Found username is success!", likeOfCommentDtos));
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("NOT_FOUND" , "Cannot found username!" , null)
         );
