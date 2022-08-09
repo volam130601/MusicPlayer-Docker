@@ -156,16 +156,16 @@ public class CommentControllerImpl implements CommentController {
     public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestBody LikeOfCommentDto likeOfCommentDto) {
         List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(likeOfCommentDto.getUsername());
         if(!likesOfComments.isEmpty()) {
-            List<LikeOfCommentDto> likeOfCommentDtos = new ArrayList<>();
-            for(LikesOfComment loc : likesOfComments) {
-                likeOfCommentDto.setComment_id(loc.getComment().getId());
-                likeOfCommentDto.setIsLiked(loc.isLiked());
-                likeOfCommentDto.setIsDisliked(loc.isDisliked());
-
-                likeOfCommentDtos.add(likeOfCommentDto);
-            }
+            List<LikeOfCommentDto> list = new ArrayList<>();
+            likesOfComments.forEach(loc -> {
+                LikeOfCommentDto l = new LikeOfCommentDto();
+                BeanUtils.copyProperties(loc , l);
+                l.setComment_id(loc.getComment().getId());
+                l.setUsername(likeOfCommentDto.getUsername());
+                list.add(l);
+            });
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("SUCCESS", "Found username is success!", likeOfCommentDtos));
+                    .body(new ResponseObject("SUCCESS", "Found username is success!", list));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("NOT_FOUND" , "Cannot found username!" , null)
