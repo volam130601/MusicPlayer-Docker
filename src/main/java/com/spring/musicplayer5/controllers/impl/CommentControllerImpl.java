@@ -153,15 +153,15 @@ public class CommentControllerImpl implements CommentController {
     }
 
     @GetMapping("/likes")
-    public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestBody LikeOfCommentDto likeOfCommentDto) {
-        List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(likeOfCommentDto.getUsername());
+    public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestParam String username) {
+        List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(username);
         if(!likesOfComments.isEmpty()) {
             List<LikeOfCommentDto> list = new ArrayList<>();
             likesOfComments.forEach(loc -> {
                 LikeOfCommentDto l = new LikeOfCommentDto();
                 BeanUtils.copyProperties(loc , l);
                 l.setComment_id(loc.getComment().getId());
-                l.setUsername(likeOfCommentDto.getUsername());
+                l.setUsername(username);
                 list.add(l);
             });
             return ResponseEntity.status(HttpStatus.OK)
