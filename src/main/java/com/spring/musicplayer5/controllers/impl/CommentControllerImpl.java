@@ -2,6 +2,7 @@ package com.spring.musicplayer5.controllers.impl;
 
 import com.spring.musicplayer5.controllers.CommentController;
 import com.spring.musicplayer5.dto.CommentDto;
+import com.spring.musicplayer5.dto.LikeOfCommentDto;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.entity.Comment;
 import com.spring.musicplayer5.entity.LikesOfComment;
@@ -139,13 +140,23 @@ public class CommentControllerImpl implements CommentController {
             existComment.get().setLikes(isLiked);
             existComment.get().setDislikes(isDisliked);
             commentService.save(existComment.get());
-
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("SUCCESS" , "Save like is successfully!" , existComment.get())
             );
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("NOT_FOUND" , "Cannot found comment or user!" , null)
+        );
+    }
+
+    @GetMapping("/likes")
+    public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestBody CommentDto commentDto) {
+        List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(commentDto.getUsername());
+        if(!likesOfComments.isEmpty())
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("SUCCESS", "Found username is success!", likesOfComments));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("NOT_FOUND" , "Cannot found username!" , null)
         );
     }
 }

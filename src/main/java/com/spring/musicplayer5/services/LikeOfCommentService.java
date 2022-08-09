@@ -13,4 +13,6 @@ public interface LikeOfCommentService {
     int countByDisliked(Long comment_id);
     Optional<LikesOfComment> findByCommentIdAndUserUsername(Long comment_id , String username);
 
+    List<LikesOfComment> findByUserUsername(String username);
+
 }

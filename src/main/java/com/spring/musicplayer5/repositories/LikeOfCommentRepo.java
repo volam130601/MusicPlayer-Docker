@@ -4,6 +4,7 @@ import com.spring.musicplayer5.entity.LikesOfComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface LikeOfCommentRepo extends JpaRepository<LikesOfComment, Long> {
@@ -14,4 +15,6 @@ public interface LikeOfCommentRepo extends JpaRepository<LikesOfComment, Long> {
     int countByDisliked(Long comment_id);
 
     Optional<LikesOfComment> findByCommentIdAndUserUsername(Long comment_id , String username);
+    List<LikesOfComment> findByUserUsername(String username);
+
 }

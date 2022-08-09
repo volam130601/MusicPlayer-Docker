@@ -10,7 +10,10 @@ public interface CommentService {
     Comment save(Comment entity);
     Optional<Comment> findById(long id);
     Optional<Comment> findByIdAndUserUsername(long id , String username);
+
     void deleteById(long id);
     Optional<Comment> findByUserUsername(String username);
     List<Comment> findByTrackId(Long trackId);
+
+
 }

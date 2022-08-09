@@ -38,4 +38,9 @@ public class LikeOfCommentServiceImpl implements LikeOfCommentService {
     public Optional<LikesOfComment> findByCommentIdAndUserUsername(Long comment_id, String username) {
         return repo.findByCommentIdAndUserUsername(comment_id, username);
     }
+
+    @Override
+    public List<LikesOfComment> findByUserUsername(String username) {
+        return repo.findByUserUsername(username);
+    }
 }
