@@ -18,8 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/playlist")
-public class
-PlaylistControllerImpl implements PlaylistController {
+public class PlaylistControllerImpl implements PlaylistController {
     @Autowired
     private PlaylistService playlistService;
 
@@ -42,7 +41,6 @@ PlaylistControllerImpl implements PlaylistController {
         );
     }
 
-    //Change Playlist follow FE
     @Override
     @PostMapping
     public ResponseEntity<ResponseObject> createPlaylist(@RequestBody PlaylistDto playlistDto) {
@@ -82,7 +80,6 @@ PlaylistControllerImpl implements PlaylistController {
         );
     }
 
-    //Error Fix
     @Override
     @PutMapping("/rename")
     public ResponseEntity<ResponseObject> renamePlaylist(@RequestBody PlaylistDto playlistDto) {
@@ -106,7 +103,6 @@ PlaylistControllerImpl implements PlaylistController {
         );
     }
 
-    //Change later
     @Override
     @DeleteMapping
     public ResponseEntity<ResponseObject> deleteById(@RequestParam long id) {

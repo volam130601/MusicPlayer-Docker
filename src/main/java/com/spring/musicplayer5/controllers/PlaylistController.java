@@ -9,7 +9,6 @@ public interface PlaylistController {
     @GetMapping("")
     ResponseEntity<ResponseObject> getAllPlaylist();
 
-    //Change Playlist follow FE
     @PostMapping
     ResponseEntity<ResponseObject> createPlaylist(@RequestBody PlaylistDto playlistDto);
 
@@ -19,7 +18,6 @@ public interface PlaylistController {
     @PutMapping("/rename")
     ResponseEntity<ResponseObject> renamePlaylist(@RequestBody PlaylistDto playlistDto);
 
-    //Change later
     @DeleteMapping
     ResponseEntity<ResponseObject> deleteById(@RequestParam long id);
 }

@@ -24,12 +24,12 @@ public class UserControllerImpl implements UserController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+
     @Autowired
     private PlaylistService playlistService;
     @Autowired
     private CommentService commentService;
 
-    //Add validation for USer at login
     @Override
     @GetMapping("/login")
     public ResponseEntity<ResponseObject> login(@RequestBody LoginRequestDto loginRequestDto) {
@@ -87,7 +87,6 @@ public class UserControllerImpl implements UserController {
         );
     }
 
-    //Change follow Front End
     @Override
     @PutMapping("/change_password")
     public ResponseEntity<ResponseObject> change_password(@RequestBody UserDto userDto) {
@@ -121,20 +120,6 @@ public class UserControllerImpl implements UserController {
         );
     }
 
-    //Lack of unlock for account
-    //////
-
-    //Function haven't built yet.
-//    @Override
-//    @DeleteMapping("/del_all_not_constraint")
-//    public ResponseEntity<ResponseObject> deleteAllNotConstraint() {
-//        List<User> userList = userService.findAll();
-//        List<String> removeList = new ArrayList<>();
-//        return ResponseEntity.status(HttpStatus.OK).body(
-//                new ResponseObject("OK" , removeList.isEmpty() ? "No accounts have been deleted!" : "Delete All User Successfully!" , removeList)
-//        );
-//    }
-
     @Override
     @GetMapping
     public ResponseEntity<ResponseObject> getAllUser() {
@@ -142,8 +127,6 @@ public class UserControllerImpl implements UserController {
                 new ResponseObject("OK" , "Get All User!" , userService.findAll())
         );
     }
-
-    //File Uploads
     @Autowired
     private StorageService storageService;
 

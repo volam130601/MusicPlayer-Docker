@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.controllers.impl;
 
+import com.spring.musicplayer5.controllers.ArtistController;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.entity.Artist;
 import com.spring.musicplayer5.entity.Track;
@@ -17,13 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/artist")
-public class ArtistControllerImpl {
+public class ArtistControllerImpl implements ArtistController {
     @Autowired
     private ArtistService artistService;
 
     @Autowired
     private TrackService trackService;
 
+    @Override
     @GetMapping
     public ResponseEntity<ResponseObject> getTop5Artist() {
         Page<Artist> artists = artistService.findAll(PageRequest.of(0, 5));
@@ -32,8 +34,9 @@ public class ArtistControllerImpl {
         );
     }
 
+    @Override
     @GetMapping("/get_page")
-    public ResponseEntity<ResponseObject> getPageArtist(@RequestParam int page ,
+    public ResponseEntity<ResponseObject> getPageArtist(@RequestParam int page,
                                                         @RequestParam int size) {
         Page<Artist> artists = artistService.findAll(PageRequest.of(page, size));
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -41,6 +44,7 @@ public class ArtistControllerImpl {
         );
     }
 
+    @Override
     @GetMapping("/get_track")
     public ResponseEntity<ResponseObject> getTrack(@RequestParam long artistId) {
         Page<Track> tracks = trackService.findByArtistId(artistId , PageRequest.of(0, 20));

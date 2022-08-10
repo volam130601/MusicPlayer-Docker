@@ -17,4 +17,13 @@ public interface CommentController {
 
     @DeleteMapping
     ResponseEntity<ResponseObject> deleteComment(@RequestBody CommentDto commentDto);
+
+    @GetMapping("/find_by_track_id")
+    ResponseEntity<ResponseObject> findByTrackId(@RequestParam Long trackId);
+
+    @PostMapping("/likes")
+    ResponseEntity<ResponseObject> saveLikeOfComment(@RequestBody CommentDto commentDto);
+
+    @GetMapping("/likes")
+    ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestParam String username);
 }

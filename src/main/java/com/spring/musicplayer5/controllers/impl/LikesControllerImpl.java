@@ -1,5 +1,6 @@
 package com.spring.musicplayer5.controllers.impl;
 
+import com.spring.musicplayer5.controllers.LikesController;
 import com.spring.musicplayer5.dto.ResponseObject;
 import com.spring.musicplayer5.entity.Likes;
 import com.spring.musicplayer5.entity.Track;
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/likes")
-public class LikesControllerImpl {
+public class LikesControllerImpl implements LikesController {
     @Autowired
     private LikesService likesService;
+    @Override
     @GetMapping("/count_likes_of_tracks")
     public ResponseEntity<ResponseObject> countLikesOfTrack(@RequestParam long track_id) {
         int count = likesService.countByIdTrackId(track_id);
@@ -23,6 +25,7 @@ public class LikesControllerImpl {
                 new ResponseObject("COUNT" , "Count Likes of Track!" , count)
         );
     }
+    @Override
     @PostMapping("/add_track_likes")
     public ResponseEntity<ResponseObject> addTrackLikes(@RequestParam long track_id,
                                                         @RequestParam String username) {

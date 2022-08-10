@@ -16,7 +16,6 @@ public interface TrackController {
     @GetMapping("/search")
     ResponseEntity<ResponseObject> getByTitle(@RequestParam String title);
 
-    //Code Pagination API : list of Tracks
     @GetMapping("/paging")
     ResponseEntity<ResponseObject> getTracksPage(@RequestParam Integer page, @RequestParam Integer size);
 

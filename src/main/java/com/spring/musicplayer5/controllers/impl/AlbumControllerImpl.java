@@ -34,7 +34,6 @@ public class AlbumControllerImpl implements AlbumController {
         Optional<Album> album = albumService.findById(albumId);
         if(album.isPresent()) {
             Page<Track> tracks = trackService.findByAlbum_Id(albumId, PageRequest.of(0 , 20));
-            System.out.println(tracks.toList());
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("OK", "Get Track have Album_id Successfully!" , tracks.toList() , tracks.getSize())
             );
@@ -46,7 +45,7 @@ public class AlbumControllerImpl implements AlbumController {
 
     @Override
     @GetMapping
-    public ResponseEntity<ResponseObject> getTop5() {
+    public ResponseEntity<ResponseObject> getTop5Track() {
         Page<Album> albums = albumService.findAll(PageRequest.of(0 , 5));
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK", "Get Track have Album_id Successfully!" , albums.toList(), albums.getSize())

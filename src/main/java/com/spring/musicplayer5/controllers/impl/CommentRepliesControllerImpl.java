@@ -31,6 +31,7 @@ public class CommentRepliesControllerImpl implements CommentRepliesController {
     @Autowired
     private CommentRepliesService commentRepliesService;
 
+    @Override
     @GetMapping
     public ResponseEntity<ResponseObject> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -38,6 +39,7 @@ public class CommentRepliesControllerImpl implements CommentRepliesController {
         );
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<ResponseObject> save(@RequestBody CommentDto commentDto) {
         Optional<Comment> commentExist = commentService.findById(commentDto.getComment_id());

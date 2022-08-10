@@ -96,6 +96,7 @@ public class CommentControllerImpl implements CommentController {
         );
     }
 
+    @Override
     @GetMapping("/find_by_track_id")
     public ResponseEntity<ResponseObject> findByTrackId(@RequestParam Long trackId) {
         List<Comment> comments = commentService.findByTrackId(trackId);
@@ -104,6 +105,7 @@ public class CommentControllerImpl implements CommentController {
         );
     }
 
+    @Override
     @PostMapping("/likes")
     public ResponseEntity<ResponseObject> saveLikeOfComment(@RequestBody CommentDto commentDto) {
         Optional<Comment> existComment = commentService.findById(commentDto.getComment_id());
@@ -152,6 +154,7 @@ public class CommentControllerImpl implements CommentController {
         );
     }
 
+    @Override
     @GetMapping("/likes")
     public ResponseEntity<ResponseObject> getAllLikeOfCommentByUser(@RequestParam String username) {
         List<LikesOfComment> likesOfComments = likeOfCommentService.findByUserUsername(username);
