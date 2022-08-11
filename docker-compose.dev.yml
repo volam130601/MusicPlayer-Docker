@@ -11,6 +11,7 @@ services:
     volumes:
       - mysql-docker-data:/var/lib/mysql
       - mysql-docker-config-deamond:/etc/mysql/conf.d
+      - ./dump_playmusic.sql:/docker-entrypoint-initdb.d
     environment:
       MYSQL_USER: lam
       MYSQL_PASSWORD: 870124zxc
